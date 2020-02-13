@@ -61,7 +61,7 @@ Pancreatic adenocarcinoma (PAAD) is the most prevalent form of pancreatic cancer
 **Dataset Description**
 =======================
 
-This hypothesis will be investigated using the TCGA-PAAD dataset from The Cancer Genome Atlas (TCGA). The dataset contains the expression of 44,084 genes from 177 resected tumors of patients suffering from PAAD. The libraries were sequenced on the Illumina HiSeq 2000 \[3\]. Gene expression levels are measured using RPKM (Reads Per Kilobase of transcript per Million mapped reads) in log10 scale. This dataset additionally contains subject demographics, including, gender, age, race, vital status, year of diagnosis, birth year, death year, and other survival-related information. Since the tumors are resected, it is possible that some patients received neoadjuvant chemotherapy with Gemcitabine. No control subjects are used since this dataset only reflects cancer patient’s genome.
+This hypothesis will be investigated using the TCGA-PAAD dataset from The Cancer Genome Atlas (TCGA). The dataset contains the expression of 44,084 genes from 177 resected tumors of patients suffering from PAAD. The libraries were sequenced on the Illumina HiSeq 2000 \[3\]. Gene expression levels are measured using RPKM (Reads Per Kilobase of transcript per Million mapped reads) in log10 scale. This dataset additionally contains subject demographics, including, gender, age, race, vital status, year of diagnosis, birth year, death year, and other survival-related information. Since the tumors are resected, it is possible that some patients received neoadjuvant chemotherapy with Gemcitabine or radiation. No control subjects are used since this dataset only reflects cancer patient’s genome.
 
 **Aims and Methodology**
 ========================
