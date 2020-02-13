@@ -1,0 +1,1 @@
+This folder contains the written portion of the project, i.e. proposal and report. 
