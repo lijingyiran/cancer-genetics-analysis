@@ -1,4 +1,4 @@
-finalpro
+Final Proposal
 ================
 
 **Motivation and Background**
@@ -28,7 +28,7 @@ Pancreatic adenocarcinoma (PAAD) is the most prevalent form of pancreatic cancer
 </thead>
 <tbody>
 <tr class="odd">
-<td>Hassan</td>
+<td>Hassan Ali</td>
 <td>Biology and CS</td>
 <td>Interdisciplinary Oncology</td>
 <td>UBC/ BC Cancer / Pancreas Centre BC</td>

@@ -11,7 +11,7 @@ Pancreatic adenocarcinoma (PAAD) is the most prevalent form of pancreatic cancer
 
 | Name | Background | Degree | Affiliation | Assigned Task |
 | -----| ----------| --------| ------------| ------------|
-| Hassan | Biology and CS  | Interdisciplinary Oncology | UBC/ BC Cancer / Pancreas Centre BC | Background research and interpretation  |
+| Hassan Ali| Biology and CS  | Interdisciplinary Oncology | UBC/ BC Cancer / Pancreas Centre BC | Background research and interpretation  |
 | Lily Xia | Stats and CS | Statistics | UBC | Statistical analysis and coding |
 | Jingyiran Li | Stats and CS | Statistics | UBC | Statistical analysis and coding |
 |Simran Samra | Biochemistry and Biology | Experimental Medicine  | Heart Lung Innovation / UBC | Background research and interpretation |
