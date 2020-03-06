@@ -17,9 +17,10 @@ library(ggplot2)
 library(reshape2)
 library(edgeR)
 library(pheatmap)
+library(ggplot2)
 ```
 
-```{r read in data}
+```{r read in data} {r fig3, fig.width = 5, fig.asp = .62}
 demo<-read.csv("data/raw_data/tcga_paad_clinical.csv")
 load("data/raw_data/tcga_paad.RData")
 
@@ -45,4 +46,58 @@ ggplot(dataMelt, aes(value, color = Samples)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
+```{r read in data} {r fig3, fig.width = 5, fig.asp = .62}
+demo<-read.csv("data/raw_data/tcga_paad_clinical.csv")
+load("data/raw_data/tcga_paad.RData")
 
+#Melt data
+tcga$gene <- rownames(tcga)
+dataMelt<-melt(tcga, id.vars = "gene", var = "Samples")
+
+#Boxplot - Distribution of Gene Expression
+ggplot(dataMelt, aes(x=Samples, y=value)) + 
+   geom_boxplot() + 
+   xlab("Samples")  + 
+  ylab("Expression (Log2 Transformed)")+ 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("Distribution of Gene Expression")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Density Plot
+ggplot(dataMelt, aes(value, color = Samples)) + 
+  geom_density() + 
+  xlab("Expression (Log2 Transformed)") +
+  ylab("Density")+ 
+  ggtitle("Distribution of Gene Expression") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r read in data} 
+demo<-read.csv("data/raw_data/tcga_paad_clinical.csv")
+load("data/raw_data/tcga_paad.RData")
+
+#Melt data
+tcga$gene <- rownames(tcga)
+dataMelt<-melt(tcga, id.vars = "gene", var = "Samples")
+```
+
+```{r fig1, fig.width = 10, fig.asp = .90}
+#Boxplot - Distribution of Gene Expression
+ggplot(dataMelt, aes(x=Samples, y=value)) + 
+   geom_boxplot() + 
+   xlab("Samples")  + 
+  ylab("Expression (Log2 Transformed)")+ 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("Distribution of Gene Expression")+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r fig2, fig.width = 10, fig.asp = .90}
+#Density Plot
+ggplot(dataMelt, aes(value, color = Samples)) + 
+  geom_density() + 
+  xlab("Expression (Log2 Transformed)") +
+  ylab("Density")+ 
+  ggtitle("Distribution of Gene Expression") +
+  theme(plot.title = element_text(hjust = 0.5)) + theme(legend.position="bottom")
+```
