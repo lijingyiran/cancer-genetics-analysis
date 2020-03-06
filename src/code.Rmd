@@ -1,0 +1,39 @@
+---
+title: "code"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+suppressPackageStartupMessages(library(tidyr))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(survival))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(stringr))
+```
+
+Data Wrangling:
+```{r}
+cli <- read.csv("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad_clinical.csv", header = T)
+cli1 <- cli %>% select(c(submitter_id, age_at_index, year_of_birth, year_of_death, vital_status, race, gender, ajcc_pathologic_m, ajcc_pathologic_n, ajcc_pathologic_t, ajcc_pathologic_stage))
+
+load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
+
+names(tcga) <- substr(names(tcga), 1, 12)
+
+tcga1 <- tibble::rownames_to_column(as.data.frame(t(as.matrix(tcga))), "submitter_id")
+
+tcga1 <- setNames(data.frame(t(tcga[,-1])), tcga[,1])
+tcga1$submitter_id <- as.factor(tcga1$submitter_id)
+cli1$submitter_id <- as.factor(cli1$submitter_id)
+
+dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
+```
+
+EDA:
+```{r}
+
+```
+
+
+
+
