@@ -1,9 +1,7 @@
----
-title: "code"
-output: github_document
----
+code
+================
 
-```{r setup, include=T}
+``` r
 suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(survival))
@@ -14,7 +12,8 @@ suppressPackageStartupMessages(library(ggridges))
 ```
 
 # Data Wrangling:
-```{r}
+
+``` r
 cli <- read.csv("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad_clinical.csv", header = T)
 cli1 <- cli %>% select(c(submitter_id, age_at_index, 
                          year_of_birth, year_of_death, vital_status, 
@@ -32,11 +31,14 @@ cli1$submitter_id <- as.factor(cli1$submitter_id)
 dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
 ```
 
+    ## Warning: Column `submitter_id` joining character vector and factor, coercing
+    ## into character vector
+
 # EDA:
 
-##Age distribution across gender
+\#\#Age distribution across gender
 
-```{r, warning=FALSE}
+``` r
 mu <- dat %>% 
   group_by(gender) %>%
   summarise(grp.mean = mean(age_at_index))
@@ -49,9 +51,11 @@ ggplot(dat, aes(x = age_at_index))+
   scale_fill_manual(values = c("#868686FF", "#EFC000FF"))
 ```
 
-##Age distribution across race
+![](code_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
-```{r, warning=F}
+\#\#Age distribution across race
+
+``` r
 ggplot(
   dat, 
   aes(x = age_at_index, y = race)
@@ -66,4 +70,6 @@ ggplot(
   labs(title = 'Age Distribution Across Race') 
 ```
 
+    ## Picking joint bandwidth of 5.56
 
+![](code_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
