@@ -4,22 +4,27 @@ output: github_document
 ---
 
 ```{r setup, include=T}
-suppressPackageStartupMessages(library(tidyr))
-suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(reshape2))
 suppressPackageStartupMessages(library(survival))
-suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(stringr))
 suppressPackageStartupMessages(library(ggpubr))
 suppressPackageStartupMessages(library(ggridges))
+suppressPackageStartupMessages(library(glmnet))
+suppressPackageStartupMessages(library(limma))
 ```
 
 # Data Wrangling:
 ```{r}
 cli <- read.csv("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad_clinical.csv", header = T)
+toDelete <- seq(0, nrow(cli), 2)
+cli <-  cli[-toDelete, ]
 cli1 <- cli %>% select(c(submitter_id, age_at_index, 
-                         year_of_birth, year_of_death, vital_status, 
-                         race, gender, ajcc_pathologic_m, ajcc_pathologic_n, 
+                         year_of_birth, year_of_death,year_of_diagnosis, 
+                         vital_status, race, gender, ajcc_pathologic_m, 
+                         ajcc_pathologic_n, 
                          ajcc_pathologic_t, ajcc_pathologic_stage))
+cli1 <- na.omit(cli1)
 
 load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 
@@ -30,6 +35,19 @@ tcga1 <- tibble::rownames_to_column(t, "submitter_id")
 cli1$submitter_id <- as.factor(cli1$submitter_id)
 
 dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
+
+cli1$year_of_death <- as.numeric(levels(cli1$year_of_death)[cli1$year_of_death])
+cli1$year_of_diagnosis <-as.numeric(levels(cli1$year_of_diagnosis)[cli1$year_of_diagnosis])
+
+
+cli1$year_of_death[is.na(cli1$year_of_death)] <- 2014
+cli1$sur_time <- cli1$year_of_death-cli1$year_of_diagnosis
+
+contrasts(as.factor(cli1$vital_status))
+
+
+temp <- data.frame(cbind(as.character(cli$submitter_id), as.character(cli$vital_status)))
+names(temp) <- c("submitter_id", "vital_status")
 ```
 
 # EDA:
@@ -64,6 +82,80 @@ ggplot(
     name = "Age"
     )+
   labs(title = 'Age Distribution Across Race') 
+```
+
+## Gene Expression Visualization
+```{r}
+expressionMatrix <- tcga %>% rownames_to_column("gene") %>% as_tibble()
+expressionMatrix <- na.omit(expressionMatrix)
+
+expressionMatrix.nogene <- t(scale(t(expressionMatrix[,-1])))
+
+meltedExpressionMatrix <- expressionMatrix %>% melt(id = "gene") 
+
+transformGeneExpressionMatrix <- function(expressionMatrix) {
+  expressionMatrix <- expressionMatrix %>%
+    as.data.frame() %>% 
+    column_to_rownames("gene") %>%
+    t() %>% as.data.frame() %>% 
+    rownames_to_column("submitter_id") %>% 
+    melt(id = "submitter_id") %>% 
+    as_tibble() %>% 
+    select(submitter_id,
+           gene = variable, 
+           expression = value)
+  return(expressionMatrix)
+}
+
+getExpressionForSamples <- function(sampleIds, expressionMatrix) {
+  # use gene column as row name
+  dataFrame <- expressionMatrix %>% 
+    as.data.frame() %>% 
+    column_to_rownames("gene")
+  return(dataFrame[sampleIds])
+}
+
+expressionDataForGene <- transformGeneExpressionMatrix(expressionMatrix)
+expressionDataForGene
+expressionDataForGene <- expressionDataForGene %>% left_join(cli1, by = "submitter_id")
+
+DesMat <- model.matrix(~ajcc_pathologic_stage, cli1)
+dsFit <- lmFit(expressionMatrix.nogene, DesMat)
+ebfit <- eBayes(dsFit)
+toptab <- topTable(ebfit)
+important.genes <- expressionMatrix[as.numeric(rownames(toptab)),1]
+important.genes
+```
+
+
+# Lasso Selection
+
+```{r}
+cli1 <- na.omit(cli1)
+
+smp_size <- floor(0.75 * nrow(cli1))
+
+set.seed(400)
+train_ind <- sample(seq_len(nrow(cli1)), size = smp_size)
+
+cli.train <- cli1[train_ind, ]
+cli.test <- cli1[-train_ind, ]
+
+yvar <- cli.train$vital_status
+temp2 <- cli.train[, - which(names(cli1) %in% c("vital_status", "submitter_id", "year_of_birth", "year_of_death"))]
+xvars <- model.matrix(yvar ~ ., data = temp2)
+
+cv.lasso.reg <- cv.glmnet(xvars, yvar, alpha = 1, nfolds = 3, 
+                          family = "binomial", measure = "mse", 
+                          standardize = T)
+best.lam <- cv.lasso.reg$lambda.min
+best.lam
+coef(cv.lasso.reg, s = best.lam)
+plot(cv.lasso.reg)
+
+lasso.reg <- glmnet(xvars, factor(yvar), alpha = 1, family = 
+                      "binomial", standardize = T)  
+plot(lasso.reg, xvar = "lambda", label = T)
 ```
 
 
