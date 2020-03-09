@@ -119,12 +119,13 @@ expressionDataForGene <- transformGeneExpressionMatrix(expressionMatrix)
 expressionDataForGene
 expressionDataForGene <- expressionDataForGene %>% left_join(cli1, by = "submitter_id")
 
-DesMat <- model.matrix(~ajcc_pathologic_stage, cli1)
+DesMat <- model.matrix(~ vital_status, cli1)
 dsFit <- lmFit(expressionMatrix.nogene, DesMat)
 ebfit <- eBayes(dsFit)
 toptab <- topTable(ebfit)
 important.genes <- expressionMatrix[as.numeric(rownames(toptab)),1]
 important.genes
+
 ```
 
 
@@ -157,5 +158,84 @@ lasso.reg <- glmnet(xvars, factor(yvar), alpha = 1, family =
                       "binomial", standardize = T)  
 plot(lasso.reg, xvar = "lambda", label = T)
 ```
+
+# Classification
+
+## Data set
+```{r}
+expressionDataForGene$gene <- as.character(expressionDataForGene$gene)
+
+# top 10 genes
+selectGene <- tcga1 %>% 
+  select(c(submitter_id, important.genes$gene))
+
+temp1 <- as.data.frame(selectGene %>% 
+  melt(id = "submitter_id",
+       var = "gene"))
+
+temp2 <- left_join(temp1, cli1) 
+
+first10 <- temp2 %>% 
+  pivot_wider(names_from = "gene",
+              values_from = "value")
+
+
+# the first 2 expressed genes
+selectGene <- tcga1 %>% 
+  select(c(submitter_id, c(important.genes$gene[1], important.genes$gene[2])))
+
+temp4 <- as.data.frame(selectGene %>% 
+  melt(id = "submitter_id",
+       var = "gene"))
+
+temp5 <- left_join(temp4, cli1) 
+first2 <- temp5 %>% 
+  pivot_wider(names_from = "gene",
+              values_from = "value") 
+
+dim(first2)
+
+temp6 <- first2[,c(14,15)]
+# Dendogram
+dist.euclidean <- dist(temp6, method = "euclidean")
+p <- hclust(dist.euclidean, method = "single")
+plot(p, xlim = 50)
+rect.hclust(p, k =5)
+
+highlight_df <- first2[c(52,55,127,135),]
+highlight_df <- highlight_df %>% select("submitter_id", "THBS1", "NNMT", "vital_status")
+
+# ggplot first 2 gene samples
+first2 %>% 
+  select("submitter_id", "THBS1", "NNMT", "vital_status") %>% 
+  ggplot(aes(x = THBS1, y = NNMT, color = vital_status)) +
+  geom_point() +
+  geom_point(data = highlight_df, aes(x = THBS1, y = NNMT), size = 10) +
+  theme_bw()
+```
+
+
+# compare the alive and dead based on average top10 gene expresion 
+```{r}
+first10$count <- mean(first10[,14:23])
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

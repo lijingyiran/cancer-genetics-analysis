@@ -1,0 +1,118 @@
+---
+title: "EDA"
+author: "Lily Xia"
+output: html_document
+---
+
+```{r}
+source('clean_dat.r')
+survival.data <- clean_survival("TCGA_PAAD survival.csv")
+gene.data <- clean_gene("tcga_paad.RData")
+```
+
+
+```{r}
+library(tidyr)
+library(survival)
+library(survminer)
+```
+
+```{r}
+cli1 <- survival.data %>% select(c(submitter_id, age_at_index, 
+                         year_of_birth, year_of_death, year_of_diagnosis,
+                         vital_status, race, gender, ajcc_pathologic_m,
+                         ajcc_pathologic_n, 
+                         ajcc_pathologic_t,
+                         ajcc_pathologic_stage,treatment_or_therapy))
+
+```
+
+## Export the Survival Data
+```{r}
+cli1 <- cli1[-c(225,226),]
+rownames(cli1) <- NULL
+cli1 %>% 
+    ggplot(aes(vital_status, age_at_index, color = vital_status)) +
+    geom_boxplot(width = 0.5) +
+    theme_bw() +
+    labs(title = "boxplot of vital status and age",
+         y = "Age",
+         x = "vital status")
+```
+
+```{r}
+hist(cli1$age_at_index, main = "Histogram of Patients' Age",
+     xlab = "Age")
+```
+
+### Kalpan-Meier estimator
+We first use Kalpan-Meier plot to summarize the survival experience of the event-time porcess. `sur_time` variable is the duration from year of diagnosis to death. 
+```{r}
+cli1$year_of_death <- as.numeric(levels(cli1$year_of_death)[cli1$year_of_death])
+cli1$year_of_diagnosis <-as.numeric(levels(cli1$year_of_diagnosis)[cli1$year_of_diagnosis])
+
+
+cli1$year_of_death[is.na(cli1$year_of_death)] <- 2014
+cli1$sur_time <- cli1$year_of_death-cli1$year_of_diagnosis
+
+contrasts(as.factor(cli1$vital_status))
+as.character(cli1$vital_status)
+```
+
+```{r}
+sur_dat <- as.data.frame(cbind(cli1$sur_time, cli1$vital_status, cli1$treatment_or_therapy))
+colnames(sur_dat) <- c("sur_time", "vital_status", "treatment_or_therapy")
+with(sur_dat, Surv(sur_time, vital_status))
+fit1 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy, data = sur_dat)
+summary(fit1, times = c(0, 1,3,6,12))
+
+plot(fit1, xlab="time", ylab="survival", main="Kaplan-Meier estimators")
+ggsurvplot(
+  fit1, 
+  data = sur_dat, 
+  size = 1,                 # change line size
+  palette = c("#E7B800", "#2E9FDF", "red"),# custom color palettes
+  conf.int = TRUE,          # Add confidence interval
+  pval = TRUE,              # Add p-value
+  ggtheme = theme_bw()
+)
+
+
+fit.coxph <- coxph(Surv(sur_time, vital_status) ~  1, data = sur_dat)
+summary(fit.coxph)
+ggforest(fit.coxph, data = sur_dat)
+
+```
+
+## Gene expression
+```{r}
+load("tcga_paad.RData")
+gene <- rownames_to_column(tcga, "gene_id")
+melted_data <- melt(gene, id.vars = "gene_id", var = "Sample_id")
+melted_data$Sample_id <- substr(melted_data$Sample_id, 1, 12)
+melted_data %>% 
+  group_by(Sample_id) %>% 
+  summarize(mean = mean(value))%>% 
+  ggplot(aes(x = as.factor(Sample_id), y = mean)) + geom_point() +
+  theme_bw()
+  
+```
+```{r}
+full_data <- right_join(x = gene.data, y = cli1, by = "submitter_id")
+sample_to_choose <- sample(1:length(unique(full_data$submitter_id)), size = 100)
+names_to_choose <- as.character(unique(full_data$submitter_id)[sample_to_choose])
+
+temp1 <- full_data %>% 
+    filter(submitter_id %in% names_to_choose) %>% 
+    group_by(submitter_id) 
+temp1$count <- rowMeans(temp1[,-c(1,44087:44098)])
+temp1 <- temp1[,-c(2:44086)]
+temp1 %>% 
+  ggplot(aes(x = as.factor(submitter_id), y = count, color = vital_status)) + 
+  geom_point() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+plot(x = temp1$count, y = temp1$ajcc_pathologic_stage)
+```
+
