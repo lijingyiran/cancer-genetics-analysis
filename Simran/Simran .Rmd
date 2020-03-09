@@ -79,7 +79,7 @@ ggplot(dataMelt, aes(value, color = Samples)) +
 ```
 
 
-```{r fig5, fig.width = 50, fig.height = 50}
+```{r fig5}
 #Prepare Data
 load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 #tcga$gene <- rownames(tcga)
@@ -97,7 +97,7 @@ pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "ave
     fontsize = 10)
 ```
 
-```{r fig6, fig.width = 50, fig.height = 50}
+```{r fig6}
 #Prepare Data
 load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 #tcga$gene <- rownames(tcga)
@@ -115,7 +115,7 @@ pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "ave
     fontsize = 10)
 ```
 
-```{r fig7, fig.width = 50, fig.height = 50}
+```{r fig7}
 #Prepare Data
 load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 #tcga$gene <- rownames(tcga)
