@@ -120,3 +120,39 @@
         fontsize = 10)
 
 ![](Simran-_files/figure-markdown_strict/fig5-1.png)
+
+    #Prepare Data
+    load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
+    #tcga$gene <- rownames(tcga)
+    demoHeat<-demo
+    toDelete <- seq(1, nrow(demoHeat), 2)
+    demoHeat<-demoHeat[toDelete ,]
+
+    designFactors <- as.data.frame(demoHeat[, c("race",  "gender")])
+
+    rownames(designFactors) <- colnames(tcga)
+    data.matrix <- cor(tcga)
+    pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "average", 
+        clustering_distance_cols = "correlation", show_colnames = T, show_rownames = T, 
+        main = "Clustering heatmap", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
+        fontsize = 10)
+
+![](Simran-_files/figure-markdown_strict/fig6-1.png)
+
+    #Prepare Data
+    load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
+    #tcga$gene <- rownames(tcga)
+    demoHeat<-demo
+    toDelete <- seq(1, nrow(demoHeat), 2)
+    demoHeat<-demoHeat[toDelete ,]
+
+    designFactors <- as.data.frame(demoHeat[, c("vital_status")])
+
+    rownames(designFactors) <- colnames(tcga)
+    data.matrix <- cor(tcga)
+    pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "average", 
+        clustering_distance_cols = "correlation", show_colnames = T, show_rownames = T, 
+        main = "Clustering heatmap", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
+        fontsize = 10)
+
+![](Simran-_files/figure-markdown_strict/fig7-1.png)
