@@ -31,7 +31,7 @@ dataMelt<-melt(tcga, id.vars = "gene", var = "Samples")
 #Set up data
 demo <- demo %>% select(c(submitter_id, age_at_index,year_of_birth, year_of_death, vital_status, race, gender, ajcc_pathologic_m, ajcc_pathologic_n,ajcc_pathologic_t, ajcc_pathologic_stage))
 
-tcgaT <- as.data.frame(tcgaT(as.matrix(tcga)))
+tcgaT <- as.data.frame(t(as.matrix(tcga)))
 tcgaN <- tibble::rownames_to_column(tcgaT, "submitter_id")
 
 demo$submitter_id <- as.factor(demo$submitter_id)
@@ -75,5 +75,5 @@ ggplot(dataMelt, aes(value, color = Samples)) +
   xlab("Expression (Log2 Transformed)") +
   ylab("Density")+ 
   ggtitle("Distribution of Gene Expression") +
-  theme(plot.title = element_text(hjust = 0.5)) + theme(legend.position="bottom")
+  theme(plot.title = element_text(hjust = 0.5)) + theme(legend.position="none")
 ```
