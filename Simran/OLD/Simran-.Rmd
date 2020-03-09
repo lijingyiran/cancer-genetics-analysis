@@ -1,8 +1,8 @@
 ---
-title: "Simran's Work"
+title: "Simran"
 author: "Simran"
 date: "05/03/2020"
-output: md_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
