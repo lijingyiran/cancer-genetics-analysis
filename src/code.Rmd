@@ -12,6 +12,7 @@ suppressPackageStartupMessages(library(ggpubr))
 suppressPackageStartupMessages(library(ggridges))
 suppressPackageStartupMessages(library(glmnet))
 suppressPackageStartupMessages(library(limma))
+suppressPackageStartupMessages(library(pheatmap))
 ```
 
 # Data Wrangling:
@@ -34,7 +35,7 @@ tcga1 <- tibble::rownames_to_column(t, "submitter_id")
 
 cli1$submitter_id <- as.factor(cli1$submitter_id)
 
-dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
+#dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
 
 cli1$year_of_death <- as.numeric(levels(cli1$year_of_death)[cli1$year_of_death])
 cli1$year_of_diagnosis <-as.numeric(levels(cli1$year_of_diagnosis)[cli1$year_of_diagnosis])
@@ -119,12 +120,29 @@ expressionDataForGene <- transformGeneExpressionMatrix(expressionMatrix)
 expressionDataForGene
 expressionDataForGene <- expressionDataForGene %>% left_join(cli1, by = "submitter_id")
 
-DesMat <- model.matrix(~ajcc_pathologic_stage, cli1)
+DesMat <- model.matrix(~vital_status, cli1)
 dsFit <- lmFit(expressionMatrix.nogene, DesMat)
 ebfit <- eBayes(dsFit)
 toptab <- topTable(ebfit)
 important.genes <- expressionMatrix[as.numeric(rownames(toptab)),1]
-important.genes
+important.genes.exp <-  tcga1 %>% select(c(submitter_id, important.genes$gene))
+
+meta.with.imp.gene <- right_join(cli1, important.genes.exp, by = "submitter_id")
+
+#heat map of important genes to show correlation
+sampleDists <- as.dist(1-cor(important.genes.exp[,-1]))
+sampleDistMatrix <- as.matrix(sampleDists)
+dist.rowname <- rownames(sampleDistMatrix)
+pheatmap(sampleDistMatrix,cluster_rows = T)
+
+#deleted the less important (based on toptable) of 
+# the high correlation pairs, ref level is the most imp gene
+
+
+# CTGF, OLFML2B, CTD-2033D15.2, CYP1B1, KCNE4 deleted.
+meta.with.imp.gene.final <- meta.with.imp.gene %>% 
+  select(-c("CTGF", "OLFML2B", "CTD-2033D15.2", "CYP1B1", "KCNE4"))
+
 ```
 
 
