@@ -10,6 +10,7 @@ suppressPackageStartupMessages(library(ggpubr))
 suppressPackageStartupMessages(library(ggridges))
 suppressPackageStartupMessages(library(glmnet))
 suppressPackageStartupMessages(library(limma))
+suppressPackageStartupMessages(library(factoextra))
 ```
 
 # Data Wrangling:
@@ -231,7 +232,7 @@ temp1 <- as.data.frame(selectGene %>%
   melt(id = "submitter_id",
        var = "gene"))
 
-temp2 <- left_join(temp1, cli1) 
+temp2 <- left_join(temp1, cli) 
 ```
 
     ## Joining, by = "submitter_id"
@@ -297,10 +298,73 @@ first2 %>%
 
 ![](code_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
 
+``` r
+first10 %>% 
+  select("submitter_id", "CREM", "THBS1", "vital_status") %>% 
+  ggplot(aes(x = CREM, y = THBS1, color = vital_status)) +
+  geom_point() +
+  theme_bw()
+```
+
+![](code_files/figure-gfm/unnamed-chunk-6-3.png)<!-- -->
+
+# PCA
+
+``` r
+res.pca1 <- prcomp(first10[,162:171], scale = T)
+fviz_eig(res.pca1,addlabels = TRUE)
+```
+
+![](code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+``` r
+var <- get_pca_var(res.pca1)
+
+set.seed(123)
+res.km <- kmeans(var$coord, centers = 2, nstart = 25)
+grp <- as.factor(res.km$cluster)
+# Color variables by groups
+fviz_pca_var(res.pca1, col.var = grp, 
+             palette = c("#0073C2FF", "#EFC000FF"),
+             legend.title = "Cluster",
+             title = "")
+```
+
+![](code_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
+
+``` r
+fviz_pca_ind(res.pca1,
+             geom.ind = "point", # show points only (nbut not "text")
+             col.ind = factor(first10$ajcc_pathologic_stage), # color by groups
+             palette = c("#0073C2FF", "#EFC000FF", "green", "blue",
+                         "lightblue", "red", "grey", "black"),
+             addEllipses = TRUE, # Concentration ellipses
+             legend.title = "8 ajcc pathologic stages",
+             alpha.ind = 0.7,
+             title = ""
+             )
+```
+
+![](code_files/figure-gfm/unnamed-chunk-7-3.png)<!-- -->
+
+``` r
+fviz_pca_ind(res.pca1,
+             geom.ind = "point", # show points only (nbut not "text")
+             col.ind = factor(first10$vital_status), # color by groups
+             palette = c("#0073C2FF","green"),
+             addEllipses = TRUE, # Concentration ellipses
+             legend.title = "vital status",
+             alpha.ind = 0.7,
+             title = ""
+             )
+```
+
+![](code_files/figure-gfm/unnamed-chunk-7-4.png)<!-- -->
+
 # compare the alive and dead based on average top10 gene expresion
 
 ``` r
-first10$count <- scale(rowMeans(first10[,14:23]))
+first10$count <- scale(rowMeans(first10[,162:171]))
 
 
 first10 %>% 
@@ -309,7 +373,7 @@ first10 %>%
   theme_bw()
 ```
 
-![](code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](code_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 # two sample t-test
@@ -320,10 +384,27 @@ t.test(first10[first10$vital_status == "Alive", ]$count, first10[first10$vital_s
     ##  Welch Two Sample t-test
     ## 
     ## data:  first10[first10$vital_status == "Alive", ]$count and first10[first10$vital_status == "Dead", ]$count
-    ## t = -0.32159, df = 162.63, p-value = 0.7482
+    ## t = -0.29897, df = 164.9, p-value = 0.7653
     ## alternative hypothesis: true difference in means is not equal to 0
     ## 95 percent confidence interval:
-    ##  -0.3511144  0.2527680
+    ##  -0.3452312  0.2544316
     ## sample estimates:
     ##   mean of x   mean of y 
-    ## -0.02737103  0.02180215
+    ## -0.02359762  0.02180215
+
+``` r
+sample_to_choose <- sample(1:length(unique(first10$submitter_id)), size = 100)
+names_to_choose <- as.character(unique(first10$submitter_id)[sample_to_choose])
+
+temp10 <- first10 %>% 
+    filter(submitter_id %in% names_to_choose) %>% 
+    group_by(submitter_id) 
+
+temp10 %>% 
+  ggplot(aes(x = as.factor(submitter_id), y = count, color = vital_status)) + 
+  geom_point() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+![](code_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->

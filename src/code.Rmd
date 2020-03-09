@@ -12,6 +12,7 @@ suppressPackageStartupMessages(library(ggpubr))
 suppressPackageStartupMessages(library(ggridges))
 suppressPackageStartupMessages(library(glmnet))
 suppressPackageStartupMessages(library(limma))
+suppressPackageStartupMessages(library(factoextra))
 ```
 
 # Data Wrangling:
@@ -166,7 +167,7 @@ temp1 <- as.data.frame(selectGene %>%
   melt(id = "submitter_id",
        var = "gene"))
 
-temp2 <- left_join(temp1, cli1) 
+temp2 <- left_join(temp1, cli) 
 
 first10 <- temp2 %>% 
   pivot_wider(names_from = "gene",
@@ -205,12 +206,59 @@ first2 %>%
   geom_point() +
   geom_point(data = highlight_df, aes(x = THBS1, y = NNMT), size = 10) +
   theme_bw()
+
+
+first10 %>% 
+  select("submitter_id", "CREM", "THBS1", "vital_status") %>% 
+  ggplot(aes(x = CREM, y = THBS1, color = vital_status)) +
+  geom_point() +
+  theme_bw()
+
+
+```
+
+# PCA
+```{r, message=FALSE, warning=FALSE}
+res.pca1 <- prcomp(first10[,162:171], scale = T)
+fviz_eig(res.pca1,addlabels = TRUE)
+var <- get_pca_var(res.pca1)
+
+set.seed(123)
+res.km <- kmeans(var$coord, centers = 2, nstart = 25)
+grp <- as.factor(res.km$cluster)
+# Color variables by groups
+fviz_pca_var(res.pca1, col.var = grp, 
+             palette = c("#0073C2FF", "#EFC000FF"),
+             legend.title = "Cluster",
+             title = "")
+
+
+fviz_pca_ind(res.pca1,
+             geom.ind = "point", # show points only (nbut not "text")
+             col.ind = factor(first10$ajcc_pathologic_stage), # color by groups
+             palette = c("#0073C2FF", "#EFC000FF", "green", "blue",
+                         "lightblue", "red", "grey", "black"),
+             addEllipses = TRUE, # Concentration ellipses
+             legend.title = "8 ajcc pathologic stages",
+             alpha.ind = 0.7,
+             title = ""
+             )
+
+fviz_pca_ind(res.pca1,
+             geom.ind = "point", # show points only (nbut not "text")
+             col.ind = factor(first10$vital_status), # color by groups
+             palette = c("#0073C2FF","green"),
+             addEllipses = TRUE, # Concentration ellipses
+             legend.title = "vital status",
+             alpha.ind = 0.7,
+             title = ""
+             )
 ```
 
 
 # compare the alive and dead based on average top10 gene expresion 
 ```{r}
-first10$count <- scale(rowMeans(first10[,14:23]))
+first10$count <- scale(rowMeans(first10[,162:171]))
 
 
 first10 %>% 
@@ -223,6 +271,20 @@ t.test(first10[first10$vital_status == "Alive", ]$count, first10[first10$vital_s
 ```
 
 
+```{r}
+sample_to_choose <- sample(1:length(unique(first10$submitter_id)), size = 100)
+names_to_choose <- as.character(unique(first10$submitter_id)[sample_to_choose])
+
+temp10 <- first10 %>% 
+    filter(submitter_id %in% names_to_choose) %>% 
+    group_by(submitter_id) 
+
+temp10 %>% 
+  ggplot(aes(x = as.factor(submitter_id), y = count, color = vital_status)) + 
+  geom_point() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
 
 
 
