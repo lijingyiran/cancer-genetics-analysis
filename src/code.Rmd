@@ -34,17 +34,12 @@ tcga1 <- tibble::rownames_to_column(t, "submitter_id")
 
 cli1$submitter_id <- as.factor(cli1$submitter_id)
 
-dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
-
 cli1$year_of_death <- as.numeric(levels(cli1$year_of_death)[cli1$year_of_death])
 cli1$year_of_diagnosis <-as.numeric(levels(cli1$year_of_diagnosis)[cli1$year_of_diagnosis])
 
 
 cli1$year_of_death[is.na(cli1$year_of_death)] <- 2014
 cli1$sur_time <- cli1$year_of_death-cli1$year_of_diagnosis
-
-contrasts(as.factor(cli1$vital_status))
-
 
 temp <- data.frame(cbind(as.character(cli$submitter_id), as.character(cli$vital_status)))
 names(temp) <- c("submitter_id", "vital_status")
@@ -54,7 +49,7 @@ names(temp) <- c("submitter_id", "vital_status")
 
 ##Age distribution across gender
 
-```{r, warning=FALSE}
+```{r eval=FALSE, warning=FALSE, include=FALSE}
 mu <- dat %>% 
   group_by(gender) %>%
   summarise(grp.mean = mean(age_at_index))
@@ -69,7 +64,7 @@ ggplot(dat, aes(x = age_at_index))+
 
 ##Age distribution across race
 
-```{r, warning=F}
+```{r eval=FALSE, warning=FALSE, include=FALSE}
 ggplot(
   dat, 
   aes(x = age_at_index, y = race)
@@ -163,8 +158,6 @@ plot(lasso.reg, xvar = "lambda", label = T)
 
 ## Data set
 ```{r}
-expressionDataForGene$gene <- as.character(expressionDataForGene$gene)
-
 # top 10 genes
 selectGene <- tcga1 %>% 
   select(c(submitter_id, important.genes$gene))
@@ -217,8 +210,16 @@ first2 %>%
 
 # compare the alive and dead based on average top10 gene expresion 
 ```{r}
-first10$count <- mean(first10[,14:23])
+first10$count <- scale(rowMeans(first10[,14:23]))
 
+
+first10 %>% 
+  ggplot(aes(x = vital_status, y = count)) +
+  geom_violin(width = 0.3) +
+  theme_bw()
+
+# two sample t-test
+t.test(first10[first10$vital_status == "Alive", ]$count, first10[first10$vital_status == "Dead", ]$count)
 ```
 
 
