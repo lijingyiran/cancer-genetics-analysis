@@ -1,3 +1,5 @@
+\#\#Loading Libraries
+
     library(magrittr)
     library(dplyr)
 
@@ -46,6 +48,8 @@
     library(pheatmap)
     library(ggplot2)
 
+\#Read in Data and Prepare Data Frames
+
     demo<-read.csv("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad_clinical.csv", header = T)
     load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 
@@ -65,43 +69,99 @@
     ## Warning: Column `submitter_id` joining character vector and factor, coercing
     ## into character vector
 
-    ggplot(data, aes(x = age_at_index)) + 
-    geom_density(aes(fill = vital_status), alpha = 0.5) +
-    xlab("Age at Index")  + 
-    ylab("Density") +
-    labs(fill='Vital Status') +
+\#Density Plot - Age at Index vs Vital Status
+
+    ggplot(data, aes(x = age_at_index, colour=vital_status)) + 
+    geom_density() +
+    labs(title = "Age at Index and Vital Status",
+    color = "Vital Status", x = "Age at Index", y = "Density") +
+    theme(
+    plot.title = element_text(color = "blue", size = 12, face = "bold")) +
     scale_fill_manual(values = c("darkblue", "darkred"))
 
-![](Simran-_files/figure-markdown_strict/fig1-1.png)
+![](Simran-_files/figure-markdown_strict/fig1-1.png) \#Density Plot -
+Age at Index vs Pathologic Stage M
 
-    ggplot(data, aes(x = age_at_index)) + 
-    geom_density(aes(fill = ajcc_pathologic_m), alpha = 0.5) +
-    xlab("Age at Index")  + 
-    ylab("Density") +
-    labs(fill='AJCC Pathologic M') 
+    ggplot(data, aes(x = age_at_index, colour=ajcc_pathologic_m)) + 
+    geom_density() +
+    labs(title = "AJCC Pathologic M",
+    subtitle = "AJCC TNM system: (M) Classifies cancers by the presence or absence of distant metastases",  x = "Age at Index", y = "Density", color = "AJCC Pathologic M", caption = "M0:No evidence of distant metastasis; M1: Distant metastasis; MX: Unknown distant metastasis status") +
+    theme(
+    plot.title = element_text(color = "blue", size = 12, face = "bold"),
+    plot.subtitle = element_text(color = "black", size = 7),
+    plot.caption = element_text(color = "black", size = 6, hjust = 0)
+    )
 
 ![](Simran-_files/figure-markdown_strict/fig2-1.png)
+
+\#Density Plot - Age at Index vs Pathologic Stage N
+
+    ggplot(data, aes(x = age_at_index, colour=ajcc_pathologic_n)) + 
+    geom_density() +
+    labs(title = "AJCC Pathologic N",
+    subtitle = "AJCC TNM system: (N) Describes involvement of regional lymph nodes",  x = "Age at Index", y = "Density", color = "AJCC Pathologic N", caption = "--: Not reported; N0: No regional lymph node metastasis; N1: Regional lymph node metastasis; \n  N1b: Metastasis in multiple regional lymph nodes; NX: Metastasis cannot be assessed") +
+    theme(
+    plot.title = element_text(color = "blue", size = 12, face = "bold"),
+    plot.subtitle = element_text(color = "black", size = 7),
+    plot.caption = element_text(color = "black", size = 6, hjust = 0)
+    )
+
+![](Simran-_files/figure-markdown_strict/fig3-1.png)
+
+\#Density Plot - Age at Index vs Pathologic Stage T
+
+    ggplot(data, aes(x = age_at_index, colour=ajcc_pathologic_t)) + 
+    geom_density() +
+    labs(title = "AJCC Pathologic T",
+    subtitle = "AJCC TNM system: (T) ",  x = "Age at Index", y = "Density", color = "AJCC Pathologic T", caption = "--: Not reported; T1: Tumor limited to the pancreas (2 cm or less in greatest dimension); T2: Tumor limited to \n the pancreas (greater than 2 cm in greatest dimension); T3: Tumor extends beyond pancrease, but without \n the involvement of coeliac axis or superior mesenteric artery; T4: Tumor involves coeliac axis or superior \n mesenteric artery; TX: Tumor cannot be assessed )
+
+
+    ") +
+    theme(
+    plot.title = element_text(color = "blue", size = 12, face = "bold"),
+    plot.subtitle = element_text(color = "black", size = 7),
+    plot.caption = element_text(color = "black", size = 6, hjust = 0)
+    )
+
+![](Simran-_files/figure-markdown_strict/fig4-1.png) ![TMN
+Classification](https://www.researchgate.net/publication/279306792/figure/tbl1/AS:601719029379081@1520472404615/TNM-Classification-for-Pancreatic-Cancer-a_W640.jpg)
+
+![Definition of the different pathologic
+stages:](https://www.researchgate.net/publication/279306792/figure/tbl2/AS:601719029383177@1520472404649/TNM-Staging-of-Pancreatic-Cancer-a_W640.jpg)
+
+\#Density Plot - Age at Index vs Pathologic Stage
+
+    ggplot(data, aes(x = age_at_index, colour=ajcc_pathologic_stage)) + 
+    geom_density() +
+    labs(title = "AJCC Pathologic Stage",  x = "Age at Index", y = "Density", color = "AJCC Pathologic Stage") +
+    theme(
+    plot.title = element_text(color = "blue", size = 12, face = "bold"),
+    plot.subtitle = element_text(color = "black", size = 7),
+    plot.caption = element_text(color = "black", size = 6, hjust = 0)
+    )
+
+![](Simran-_files/figure-markdown_strict/fig5-1.png)
 
     #Boxplot - Distribution of Gene Expression
     ggplot(dataMelt, aes(x=Samples, y=value)) + 
        geom_boxplot() + 
        xlab("Samples")  + 
-      ylab("Expression (Log2 Transformed)")+ 
+      ylab("Expression (Log_2_ Transformed)")+ 
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-      ggtitle("Distribution of Gene Expression")+
+      ggtitle("Distribution of Gene Expression Across All 177 Samples")+
       theme(plot.title = element_text(hjust = 0.5))
 
-![](Simran-_files/figure-markdown_strict/fig3-1.png)
+![](Simran-_files/figure-markdown_strict/fig6-1.png)
 
     #Density Plot
     ggplot(dataMelt, aes(value, color = Samples)) + 
       geom_density() + 
       xlab("Expression (Log2 Transformed)") +
       ylab("Density")+ 
-      ggtitle("Distribution of Gene Expression") +
+      ggtitle("Distribution of Gene Expression Across All 177 Samples") +
       theme(plot.title = element_text(hjust = 0.5)) + theme(legend.position="none")
 
-![](Simran-_files/figure-markdown_strict/fig4-1.png)
+![](Simran-_files/figure-markdown_strict/fig7-1.png)
 
     #Prepare Data
     load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
@@ -110,16 +170,16 @@
     toDelete <- seq(1, nrow(demoHeat), 2)
     demoHeat<-demoHeat[toDelete ,]
 
-    designFactors <- as.data.frame(demoHeat[, c("ajcc_pathologic_m",  "ajcc_pathologic_n", "ajcc_pathologic_t", "ajcc_pathologic_stage")])
+    designFactors <- as.data.frame(demoHeat[, c("ajcc_pathologic_stage", "vital_status")])
 
     rownames(designFactors) <- colnames(tcga)
     data.matrix <- cor(tcga)
     pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "average", 
         clustering_distance_cols = "correlation", show_colnames = T, show_rownames = T, 
-        main = "Clustering heatmap", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
-        fontsize = 10)
+        main = "Clustering Heatmap: Pathologic Stage and Vital Status ", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
+        fontsize = 4)
 
-![](Simran-_files/figure-markdown_strict/fig5-1.png)
+![](Simran-_files/figure-markdown_strict/fig8-1.png)
 
     #Prepare Data
     load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
@@ -134,10 +194,10 @@
     data.matrix <- cor(tcga)
     pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "average", 
         clustering_distance_cols = "correlation", show_colnames = T, show_rownames = T, 
-        main = "Clustering heatmap", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
-        fontsize = 10)
+        main = "Clustering Heatmap: Gender and Race", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
+        fontsize = 4)
 
-![](Simran-_files/figure-markdown_strict/fig6-1.png)
+![](Simran-_files/figure-markdown_strict/fig9-1.png)
 
     #Prepare Data
     load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
@@ -146,13 +206,13 @@
     toDelete <- seq(1, nrow(demoHeat), 2)
     demoHeat<-demoHeat[toDelete ,]
 
-    designFactors <- as.data.frame(demoHeat[, c("vital_status")])
+    designFactors <- as.data.frame(demoHeat[, c("ajcc_pathologic_n", "ajcc_pathologic_t", "ajcc_pathologic_m")])
 
     rownames(designFactors) <- colnames(tcga)
     data.matrix <- cor(tcga)
     pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "average", 
         clustering_distance_cols = "correlation", show_colnames = T, show_rownames = T, 
-        main = "Clustering heatmap", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
-        fontsize = 10)
+        main = "Clustering Heatmap: AJCC TNM System", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
+        fontsize = 4)
 
-![](Simran-_files/figure-markdown_strict/fig7-1.png)
+![](Simran-_files/figure-markdown_strict/fig10-1.png)
