@@ -177,7 +177,7 @@ stages:](https://www.researchgate.net/publication/279306792/figure/tbl2/AS:60171
     pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "average", 
         clustering_distance_cols = "correlation", show_colnames = T, show_rownames = T, 
         main = "Clustering Heatmap: Pathologic Stage and Vital Status ", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
-        fontsize = 4)
+        fontsize = 3)
 
 ![](Simran-_files/figure-markdown_strict/fig8-1.png)
 
@@ -195,7 +195,7 @@ stages:](https://www.researchgate.net/publication/279306792/figure/tbl2/AS:60171
     pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "average", 
         clustering_distance_cols = "correlation", show_colnames = T, show_rownames = T, 
         main = "Clustering Heatmap: Gender and Race", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
-        fontsize = 4)
+        fontsize = 3)
 
 ![](Simran-_files/figure-markdown_strict/fig9-1.png)
 
@@ -213,6 +213,6 @@ stages:](https://www.researchgate.net/publication/279306792/figure/tbl2/AS:60171
     pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "average", 
         clustering_distance_cols = "correlation", show_colnames = T, show_rownames = T, 
         main = "Clustering Heatmap: AJCC TNM System", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
-        fontsize = 4)
+        fontsize = 3)
 
 ![](Simran-_files/figure-markdown_strict/fig10-1.png)

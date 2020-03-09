@@ -148,10 +148,10 @@ data.matrix <- cor(tcga)
 pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "average", 
     clustering_distance_cols = "correlation", show_colnames = T, show_rownames = T, 
     main = "Clustering Heatmap: Pathologic Stage and Vital Status ", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
-    fontsize = 4)
+    fontsize = 3)
 ```
 
-```{r fig9, fig.asp = .95}
+```{r fig9, fig.width = 10, fig.asp = .95}
 #Prepare Data
 load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 #tcga$gene <- rownames(tcga)
@@ -166,10 +166,10 @@ data.matrix <- cor(tcga)
 pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "average", 
     clustering_distance_cols = "correlation", show_colnames = T, show_rownames = T, 
     main = "Clustering Heatmap: Gender and Race", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
-    fontsize = 4)
+    fontsize = 3)
 ```
 
-```{r fig10, widthfig.asp = .95}
+```{r fig10, fig.width = 10, fig.asp = .95}
 #Prepare Data
 load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 #tcga$gene <- rownames(tcga)
@@ -184,5 +184,5 @@ data.matrix <- cor(tcga)
 pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "average", 
     clustering_distance_cols = "correlation", show_colnames = T, show_rownames = T, 
     main = "Clustering Heatmap: AJCC TNM System", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
-    fontsize = 4)
+    fontsize = 3)
 ```
