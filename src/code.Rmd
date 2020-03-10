@@ -14,6 +14,8 @@ suppressPackageStartupMessages(library(glmnet))
 suppressPackageStartupMessages(library(limma))
 suppressPackageStartupMessages(library(factoextra))
 suppressPackageStartupMessages(library(pheatmap))
+suppressPackageStartupMessages(library(randomForest))
+suppressPackageStartupMessages(library(fastAdaboost))
 ```
 
 # Data Wrangling:
@@ -150,18 +152,19 @@ meta.with.imp.gene.final <- meta.with.imp.gene %>%
 # Lasso Selection
 
 ```{r}
-cli1 <- na.omit(cli1)
-
-smp_size <- floor(0.75 * nrow(cli1))
+meta.with.imp.gene.final <- na.omit(meta.with.imp.gene.final)
+meta.with.imp.gene.final$age_at_index <- as.numeric(meta.with.imp.gene.final$age_at_index)
+colnames(meta.with.imp.gene.final)[colnames(meta.with.imp.gene.final) == "RP11-21L23.2"] = "RP11"
+smp_size <- floor(0.75 * nrow(meta.with.imp.gene.final))
 
 set.seed(400)
-train_ind <- sample(seq_len(nrow(cli1)), size = smp_size)
+train_ind <- sample(seq_len(nrow(meta.with.imp.gene.final)), size = smp_size)
 
-cli.train <- cli1[train_ind, ]
-cli.test <- cli1[-train_ind, ]
+train <- meta.with.imp.gene.final[train_ind, ]
+test <- meta.with.imp.gene.final[-train_ind, ]
 
-yvar <- cli.train$vital_status
-temp2 <- cli.train[, - which(names(cli1) %in% c("vital_status", "submitter_id", "year_of_birth", "year_of_death"))]
+yvar <- train$vital_status
+temp2 <- train[, - which(names(meta.with.imp.gene.final) %in% c("vital_status", "submitter_id", "year_of_birth", "year_of_death"))]
 xvars <- model.matrix(yvar ~ ., data = temp2)
 
 cv.lasso.reg <- cv.glmnet(xvars, yvar, alpha = 1, nfolds = 3, 
@@ -177,7 +180,38 @@ lasso.reg <- glmnet(xvars, factor(yvar), alpha = 1, family =
 plot(lasso.reg, xvar = "lambda", label = T)
 ```
 
-# Classification
+# Classification of Vital Status
+```{r}
+set.seed(400)
+train <- subset(train, select = -c(submitter_id, NNMT, ITPRIP))
+test <- subset(test, select = -c(submitter_id))
+model1 <- randomForest(vital_status ~ ., data = train, importance = TRUE)
+model1
+
+# Predicting on train set
+predTrain <- predict(model1, train, type = "class")
+# Checking classification accuracy
+table(predTrain, train$vital_status) 
+
+predValid <- predict(model1, test, type = "class")
+# Checking classification accuracy
+mean(predValid == test$vital_status)                    
+table(predValid,test$vital_status)
+
+# To check important variables
+importance(model1)      
+varImpPlot(model1)
+
+#Adaboost
+ada <- adaboost(vital_status ~., data =  train, 10, tree_depth = 5, n_rounds = 200, verbose = TRUE)
+pred <- predict(ada,newdata=test)
+print(pred$error)
+print(table(pred$class,test$vital_status))
+```
+
+
+
+# Classification of Gene Expressions
 
 ## Data set
 ```{r}
