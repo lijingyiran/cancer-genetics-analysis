@@ -1,7 +1,5 @@
 ---
 title: "exploratory_analysis"
-author: "Hassan Ali"
-date: "09/03/2020"
 output: github_document
 ---
 

@@ -1,7 +1,7 @@
 exploratory\_analysis
 ================
-Hassan Ali
-09/03/2020
+
+*PCA of top 5000 most variable genes*
 
 ``` r
 #PCA for top 5000 most variable genes
@@ -20,10 +20,9 @@ plot(FV[, 1:2])
 ```
 
 ![](exploratory_analysis_HA_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+*Cleaning the Dataset*
 
 ``` r
-#CLeaning the dataset
-
 #Order by PC1
 FV_sorted <- FV[order(-FV$PC1),]
 
