@@ -55,11 +55,11 @@ names(temp) <- c("submitter_id", "vital_status")
 ##Age distribution across gender
 
 ```{r eval=FALSE, warning=FALSE, include=FALSE}
-mu <- dat %>% 
+mu <- cli1 %>% 
   group_by(gender) %>%
   summarise(grp.mean = mean(age_at_index))
 
-ggplot(dat, aes(x = age_at_index))+ 
+ggplot(cli1, aes(x = age_at_index))+ 
   geom_density(aes(fill = gender), alpha = 0.4) +
       geom_vline(aes(xintercept = grp.mean, color = gender),
              data = mu, linetype = "dashed") +
@@ -71,7 +71,7 @@ ggplot(dat, aes(x = age_at_index))+
 
 ```{r eval=FALSE, warning=FALSE, include=FALSE}
 ggplot(
-  dat, 
+  cli1, 
   aes(x = age_at_index, y = race)
   ) +
   geom_density_ridges_gradient(
