@@ -7,6 +7,7 @@ output: github_document
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(reshape2))
 suppressPackageStartupMessages(library(survival))
+suppressPackageStartupMessages(library(survminer))
 suppressPackageStartupMessages(library(stringr))
 suppressPackageStartupMessages(library(ggpubr))
 suppressPackageStartupMessages(library(ggridges))
@@ -27,7 +28,8 @@ cli1 <- cli %>% select(c(submitter_id, age_at_index,
                          year_of_birth, year_of_death,year_of_diagnosis, 
                          vital_status, race, gender, ajcc_pathologic_m, 
                          ajcc_pathologic_n, 
-                         ajcc_pathologic_t, ajcc_pathologic_stage))
+                         ajcc_pathologic_t, ajcc_pathologic_stage,
+                         treatment_or_therapy))
 cli1 <- na.omit(cli1)
 
 load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
@@ -35,8 +37,6 @@ load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.
 names(tcga) <- substr(names(tcga), 1, 12)
 t <- as.data.frame(t(as.matrix(tcga)))
 tcga1 <- tibble::rownames_to_column(t, "submitter_id")
-
-cli1$submitter_id <- as.factor(cli1$submitter_id)
 
 
 #dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
@@ -354,8 +354,6 @@ with(cli1, Surv(sur_time, vital_status))
 fit1 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy, data = sur_dat)
 summary(fit1)
 
-#plot(fit1, xlab="time", ylab="survival", main="Kaplan-Meier estimators")
-
 ggsurvplot(
   fit1, 
   data =sur_dat , 
@@ -371,10 +369,6 @@ fit.coxph <- coxph(Surv(sur_time, vital_status) ~ treatment_or_therapy,
                    data = sur_dat)
 
 ggforest(fit.coxph, data = sur_dat)
-
-fit.aft.wei <- survreg(Surv(sur_time, vital_status) ~ 
-                         treatment_or_therapy, data = sur_dat)
-
 ```
 
 ## Log rank test
