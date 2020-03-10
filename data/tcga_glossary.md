@@ -39,4 +39,4 @@ TCGA\_PAAD Dataset Column Definitions
 | Vital status                              | The state of being living or deceased for cases that are part of the investigation. See NCI Thesaurus Code: C25717.                                                                                                                                                                              |
 | Primary therapy outcome success           | A value denoting the result of therapy for a given disease or condition in a patient or group of patients. See NCI Thesaurus Code: C18919.                                                                                                                                                       |
 
-Reference: https://docs.cancergenomicscloud.org/docs/tcga-metadata#section-entities-for-tcga
+[Reference](https://docs.cancergenomicscloud.org/docs/tcga-metadata#section-entities-for-tcga)
