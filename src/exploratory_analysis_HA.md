@@ -20,3 +20,16 @@ plot(FV[, 1:2])
 ```
 
 ![](exploratory_analysis_HA_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
+
+``` r
+#CLeaning the dataset
+
+#Order by PC1
+FV_sorted <- FV[order(-FV$PC1),]
+
+#identify 8 outlier samples
+outlier_samples <- rownames(FV_sorted[1:8,])
+
+#Remove 8 outlier samples
+tcga_z_qcd <- tcga_z[, !(colnames(tcga_z) %in% outlier_samples)]
+```

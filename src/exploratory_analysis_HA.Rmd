@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 load("~/Desktop/Bioinformatics/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 ```
 
+_PCA of top 5000 most variable genes_
 ```{r}
 #PCA for top 5000 most variable genes
 
@@ -26,9 +27,8 @@ rownames(FV) <- colnames(tcga_filt)
 plot(FV[, 1:2])
 
 ```
-
+_Cleaning the Dataset_
 ```{r}
-#CLeaning the dataset
 
 #Order by PC1
 FV_sorted <- FV[order(-FV$PC1),]
@@ -39,8 +39,6 @@ outlier_samples <- rownames(FV_sorted[1:8,])
 #Remove 8 outlier samples
 tcga_z_qcd <- tcga_z[, !(colnames(tcga_z) %in% outlier_samples)]
 
-
-
-
-
 ```
+
+
