@@ -37,7 +37,8 @@ tcga1 <- tibble::rownames_to_column(t, "submitter_id")
 cli1$submitter_id <- as.factor(cli1$submitter_id)
 
 
-dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
+#dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
+
 cli1$year_of_death <- as.numeric(levels(cli1$year_of_death)[cli1$year_of_death])
 cli1$year_of_diagnosis <-as.numeric(levels(cli1$year_of_diagnosis)[cli1$year_of_diagnosis])
 
@@ -307,6 +308,46 @@ temp10 %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
+# Survival Analysis
+
+##Kalpan-Meier estimator
+We first use Kalpan-Meier plot to summarize the survival experience of the event-time porcess. `sur_time` variable is the duration from year of diagnosis to death. 
+
+```{r}
+sur_dat <- as.data.frame(cbind(cli1$sur_time, cli1$vital_status, cli1$treatment_or_therapy))
+colnames(sur_dat) <- c("sur_time", "vital_status", "treatment_or_therapy")
+with(cli1, Surv(sur_time, vital_status))
+fit1 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy, data = sur_dat)
+summary(fit1)
+
+#plot(fit1, xlab="time", ylab="survival", main="Kaplan-Meier estimators")
+
+ggsurvplot(
+  fit1, 
+  data =sur_dat , 
+  size = 1,                 # change line size
+  palette = 
+    c("#E7B800", "#2E9FDF", "green"),# custom color palettes
+  conf.int = TRUE,          # Add confidence interval
+  pval = TRUE,              # Add p-value
+  ggtheme = theme_bw()    
+)
+
+fit.coxph <- coxph(Surv(sur_time, vital_status) ~ treatment_or_therapy, 
+                   data = sur_dat)
+ggforest(fit.coxph, data = sur_dat)
+
+fit.aft.wei <- survreg(Surv(sur_time, vital_status) ~ 
+                         treatment_or_therapy, data = sur_dat)
+
+```
+
+## Log rank test
+```{r}
+survdiff(Surv(sur_time, vital_status) ~ treatment_or_therapy, 
+                   data = sur_dat)
+#p=0.2 no difference in survival
+```
 
 
 
