@@ -12,6 +12,7 @@ suppressPackageStartupMessages(library(ggpubr))
 suppressPackageStartupMessages(library(ggridges))
 suppressPackageStartupMessages(library(glmnet))
 suppressPackageStartupMessages(library(limma))
+suppressPackageStartupMessages(library(factoextra))
 suppressPackageStartupMessages(library(pheatmap))
 ```
 
@@ -35,17 +36,14 @@ tcga1 <- tibble::rownames_to_column(t, "submitter_id")
 
 cli1$submitter_id <- as.factor(cli1$submitter_id)
 
-#dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
 
+dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
 cli1$year_of_death <- as.numeric(levels(cli1$year_of_death)[cli1$year_of_death])
 cli1$year_of_diagnosis <-as.numeric(levels(cli1$year_of_diagnosis)[cli1$year_of_diagnosis])
 
 
 cli1$year_of_death[is.na(cli1$year_of_death)] <- 2014
 cli1$sur_time <- cli1$year_of_death-cli1$year_of_diagnosis
-
-contrasts(as.factor(cli1$vital_status))
-
 
 temp <- data.frame(cbind(as.character(cli$submitter_id), as.character(cli$vital_status)))
 names(temp) <- c("submitter_id", "vital_status")
@@ -55,7 +53,7 @@ names(temp) <- c("submitter_id", "vital_status")
 
 ##Age distribution across gender
 
-```{r, warning=FALSE}
+```{r eval=FALSE, warning=FALSE, include=FALSE}
 mu <- dat %>% 
   group_by(gender) %>%
   summarise(grp.mean = mean(age_at_index))
@@ -70,7 +68,7 @@ ggplot(dat, aes(x = age_at_index))+
 
 ##Age distribution across race
 
-```{r, warning=F}
+```{r eval=FALSE, warning=FALSE, include=FALSE}
 ggplot(
   dat, 
   aes(x = age_at_index, y = race)
@@ -120,11 +118,13 @@ expressionDataForGene <- transformGeneExpressionMatrix(expressionMatrix)
 expressionDataForGene
 expressionDataForGene <- expressionDataForGene %>% left_join(cli1, by = "submitter_id")
 
-DesMat <- model.matrix(~vital_status, cli1)
+
+DesMat <- model.matrix(~ vital_status, cli1)
 dsFit <- lmFit(expressionMatrix.nogene, DesMat)
 ebfit <- eBayes(dsFit)
 toptab <- topTable(ebfit)
 important.genes <- expressionMatrix[as.numeric(rownames(toptab)),1]
+
 important.genes.exp <-  tcga1 %>% select(c(submitter_id, important.genes$gene))
 
 meta.with.imp.gene <- right_join(cli1, important.genes.exp, by = "submitter_id")
@@ -175,5 +175,151 @@ lasso.reg <- glmnet(xvars, factor(yvar), alpha = 1, family =
                       "binomial", standardize = T)  
 plot(lasso.reg, xvar = "lambda", label = T)
 ```
+
+# Classification
+
+## Data set
+```{r}
+# top 10 genes
+selectGene <- tcga1 %>% 
+  select(c(submitter_id, important.genes$gene))
+
+temp1 <- as.data.frame(selectGene %>% 
+  melt(id = "submitter_id",
+       var = "gene"))
+
+temp2 <- left_join(temp1, cli) 
+
+first10 <- temp2 %>% 
+  pivot_wider(names_from = "gene",
+              values_from = "value")
+
+
+# the first 2 expressed genes
+selectGene <- tcga1 %>% 
+  select(c(submitter_id, c(important.genes$gene[1], important.genes$gene[2])))
+
+temp4 <- as.data.frame(selectGene %>% 
+  melt(id = "submitter_id",
+       var = "gene"))
+
+temp5 <- left_join(temp4, cli1) 
+first2 <- temp5 %>% 
+  pivot_wider(names_from = "gene",
+              values_from = "value") 
+
+dim(first2)
+
+temp6 <- first2[,c(14,15)]
+# Dendogram
+dist.euclidean <- dist(temp6, method = "euclidean")
+p <- hclust(dist.euclidean, method = "single")
+plot(p, xlim = 50)
+rect.hclust(p, k =5)
+
+highlight_df <- first2[c(52,55,127,135),]
+highlight_df <- highlight_df %>% select("submitter_id", "THBS1", "NNMT", "vital_status")
+
+# ggplot first 2 gene samples
+first2 %>% 
+  select("submitter_id", "THBS1", "NNMT", "vital_status") %>% 
+  ggplot(aes(x = THBS1, y = NNMT, color = vital_status)) +
+  geom_point() +
+  geom_point(data = highlight_df, aes(x = THBS1, y = NNMT), size = 10) +
+  theme_bw()
+
+
+first10 %>% 
+  select("submitter_id", "CREM", "THBS1", "vital_status") %>% 
+  ggplot(aes(x = CREM, y = THBS1, color = vital_status)) +
+  geom_point() +
+  theme_bw()
+
+
+```
+
+# PCA
+```{r, message=FALSE, warning=FALSE}
+res.pca1 <- prcomp(first10[,162:171], scale = T)
+fviz_eig(res.pca1,addlabels = TRUE)
+var <- get_pca_var(res.pca1)
+
+set.seed(123)
+res.km <- kmeans(var$coord, centers = 2, nstart = 25)
+grp <- as.factor(res.km$cluster)
+# Color variables by groups
+fviz_pca_var(res.pca1, col.var = grp, 
+             palette = c("#0073C2FF", "#EFC000FF"),
+             legend.title = "Cluster",
+             title = "")
+
+
+fviz_pca_ind(res.pca1,
+             geom.ind = "point", # show points only (nbut not "text")
+             col.ind = factor(first10$ajcc_pathologic_stage), # color by groups
+             palette = c("#0073C2FF", "#EFC000FF", "green", "blue",
+                         "lightblue", "red", "grey", "black"),
+             addEllipses = TRUE, # Concentration ellipses
+             legend.title = "8 ajcc pathologic stages",
+             alpha.ind = 0.7,
+             title = ""
+             )
+
+fviz_pca_ind(res.pca1,
+             geom.ind = "point", # show points only (nbut not "text")
+             col.ind = factor(first10$vital_status), # color by groups
+             palette = c("#0073C2FF","green"),
+             addEllipses = TRUE, # Concentration ellipses
+             legend.title = "vital status",
+             alpha.ind = 0.7,
+             title = ""
+             )
+```
+
+
+# compare the alive and dead based on average top10 gene expresion 
+```{r}
+first10$count <- scale(rowMeans(first10[,162:171]))
+
+
+first10 %>% 
+  ggplot(aes(x = vital_status, y = count)) +
+  geom_violin(width = 0.3) +
+  theme_bw()
+
+# two sample t-test
+t.test(first10[first10$vital_status == "Alive", ]$count, first10[first10$vital_status == "Dead", ]$count)
+```
+
+
+```{r}
+sample_to_choose <- sample(1:length(unique(first10$submitter_id)), size = 100)
+names_to_choose <- as.character(unique(first10$submitter_id)[sample_to_choose])
+
+temp10 <- first10 %>% 
+    filter(submitter_id %in% names_to_choose) %>% 
+    group_by(submitter_id) 
+
+temp10 %>% 
+  ggplot(aes(x = as.factor(submitter_id), y = count, color = vital_status)) + 
+  geom_point() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
