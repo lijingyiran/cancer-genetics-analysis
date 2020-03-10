@@ -34,7 +34,8 @@ tcga_z_qcd <- tcga_z[, !(colnames(tcga_z) %in% outlier_samples)]
 tcga_qcd <- tcga[, !(colnames(tcga) %in% outlier_samples)]
 
 #PCA of filtered dataset
-A <- cov(tcga_qcd, method = "pearson")
+tcga_filt <- tcga_z_qcd[rownames(tcga_z_qcd) %in% rownames(tcga_var_top5000),]
+A <- cov(tcga_filt, method = "pearson")
 E <- eigen(A)
 FV <- data.frame(as.matrix(E$vectors[, 1:2]), stringsAsFactors = F)
 colnames(FV) <- c("PC1", "PC2")
