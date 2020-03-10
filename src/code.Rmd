@@ -335,6 +335,7 @@ ggsurvplot(
 
 fit.coxph <- coxph(Surv(sur_time, vital_status) ~ treatment_or_therapy, 
                    data = sur_dat)
+
 ggforest(fit.coxph, data = sur_dat)
 
 fit.aft.wei <- survreg(Surv(sur_time, vital_status) ~ 
@@ -348,19 +349,3 @@ survdiff(Surv(sur_time, vital_status) ~ treatment_or_therapy,
                    data = sur_dat)
 #p=0.2 no difference in survival
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
