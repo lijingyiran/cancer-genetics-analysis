@@ -40,7 +40,7 @@ Pancreatic adenocarcinoma (PAAD) is the most prevalent form of pancreatic cancer
 (We may want to edit this once we have better-defined folders. Below an example.) Each directory includes its own README file. In general: 
 * [`docs`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/docs) includes the written portions of the project: main, sections, appendices, and project outline tex/pdfs/aux files. 
   + [:point_right: project final proposal](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/project_proposal.md)
-  + [:point_right: progress report](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/progess_report.md)
+  + [:point_right: progress report](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/progress_report.md)
 * [`misc`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/misc) contains miscelaneous files. 
 * [`ref`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/ref) has the bib file for generating the project's references. 
 * [`src`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/src) includes the R code developed for the project.
