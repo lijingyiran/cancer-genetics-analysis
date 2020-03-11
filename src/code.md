@@ -251,7 +251,7 @@ plot(lasso.reg, xvar = "lambda", label = T)
 ``` r
 set.seed(400)
 train <- subset(train, select = -c(submitter_id, NNMT, ITPRIP))
-test <- subset(test, select = -c(submitter_id))
+test <- subset(test, select = -c(submitter_id,NNMT, ITPRIP))
 model1 <- randomForest(vital_status ~ ., data = train, importance = TRUE)
 model1
 ```
