@@ -228,16 +228,16 @@ and 2 for top 10 genes
 Figure 6: Clustering vital status based on principal components 1 and 2
 for top 10 genes
 
-![Clustering vital status based on top 5000 gene
-expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/src/exploratory_analysis_HA_files/figure-gfm/unnamed-chunk-3-4.png)
-
-Figure 7: Clustering vital status based on top 5000 gene expression
-
 We kept the first two principal components with 71.4% variation retained
 to compare projected gene expression points of samples’ vital status.
 The concentration ellipses of alive and dead are greatly overlapping,
 meaning that the gene expression of alive samples might be similar to
 that of dead samples.
+
+![Clustering vital status based on top 5000 gene
+expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/src/exploratory_analysis_HA_files/figure-gfm/unnamed-chunk-3-4.png)
+
+Figure 7: Clustering vital status based on top 5000 gene expression
 
 ![ROC for Random Forest (black) and
 AdaBoost(red):](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/roc.png)
