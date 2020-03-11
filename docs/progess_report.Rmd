@@ -54,34 +54,34 @@ We were able to answer our hypotheses. Below is a brief summary of the primary r
 
 The top 5 genes selected using limma, ebayes, and a correlation heatmap is THBS1, NNMT, CREM, ITPRIP, and RP11. 
 
-![Heatmap of top 10 genes based on expression level:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/heatmap.png)
+![Heatmap of top 10 genes based on expression level:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/heatmap.png)
 
 The most important variables selected based on LASSO are age_at_index, year_of_diagnosis, race, gender, pathologic T, N, and M, pathologic stage, survival time, THBS1, CREM, and RP11. 
 
 In the hierarchical dendrogram (clustering) the samples are not well-separated when we stop the clustering algorithm at k equal to 5. It might be because of the similarity of gene expressions among all pancreatic adenocarcinoma patients.
 
-![Hierarchical dendrogram:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/dendro.png)
+![Hierarchical dendrogram:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/dendro.png)
 
 The Scree plot shows that the first principal component captures 63.1% of the total variance, and the second principal component explains 8.3% variance from the remaining variation. We kept the first two principal components with 71.4% variation retained to compare projected gene expression points of samples’ vital status. The concentration ellipses of alive and dead are greatly overlapping, meaning that the gene expression of alive samples might be similar to that of dead samples. 
 
-![Scree Plot:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/scree.png)
-![Clustering vital status based on THBS1 and NNMT gene expression:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/clust.png)
-![Clustering vital status based on THBS1 and CREM gene expression:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/clust2.png)
+![Scree Plot:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/scree.png)
+![Clustering vital status based on THBS1 and NNMT gene expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/clust.png)
+![Clustering vital status based on THBS1 and CREM gene expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/clust2.png)
 
-![Clustering genes based on principal components 1 and 2:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/clust3.png)
+![Clustering genes based on principal components 1 and 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/clust3.png)
 
-![Clustering pathologic stages based on principal components 1 and 2:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/clust4.png)
+![Clustering pathologic stages based on principal components 1 and 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/clust4.png)
 
-![Clustering vital status based on principal components 1 and 2:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/clust5.png)
+![Clustering vital status based on principal components 1 and 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/clust5.png)
 
 The accuracy for the random forest algorithm is 70% while that for the AdaBoost algorithm is 73%. The AUC for the random forest is 0.8825 while that for AdaBoost is 0.8194. Both algorithms yielded similar results.
 
-![ROC for Random Forest (black) and AdaBoost(red):](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/roc.png)
+![ROC for Random Forest (black) and AdaBoost(red):](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/roc.png)
 The determining factor of correct classifications is suspected to be covariates other than gene expression since based on the gene expression analysis, there is no significant difference in subjects’ top gene expression. Based on the Kaplan Meier plot, the three group does not show a significantly different survival rate. A Log-rank test with a p-value of 0.2 further confirmed that there’s no difference in survival rate among the groups: treatment, therapy, and not reported.
 
 ![Kaplan Meier Estimate Curve:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/km.png
 
 
-![Hazard Ratio Curve:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/hr.png)
+![Hazard Ratio Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/hr.png)
 
 One of the primary goals is to identify which target genes affect the survival rate. However, the real challenge is that we could not find the target genes from the top 10 genes. One possibility is that the target genes were not in the top 10 genes in the first place. Secondly, even if the target genes are located in the group of top 10 genes if a set of genes are enhancers while the others are inhibitors, the positive and negative effects that they impose on patients’ survival could be canceled out. Hence, finding those target genes is an immense challenge without further data on the genes and patients. The classification accuracy for both random forest and AdaBoost is semi-optimal. Different linear combinations of the covariates and different tree depths were used in both algorithms, but accuracy cannot be improved significantly. Therefore, an optimization strategy for both algorithms should be explored. Stratification should be employed to group subjects based on baseline covariates. However, stratification is not possible with the current set of covariates because they cannot serve as cluster factors. More information on subjects is needed. Another challenge is that the genes may not directly affect survival time, hence making it difficult to pinpoint target genes solely based on the outcomes of interest - survival time and vital status.
