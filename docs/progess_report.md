@@ -185,7 +185,7 @@ genes may not directly affect survival time, hence making it difficult
 to pinpoint target genes solely based on the outcomes of interest -
 survival time and vital status.
 
-## Appendix
+# Appendix
 
 ![Heatmap of top 10 genes based on expression
 level:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/heatmap.png)
