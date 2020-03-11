@@ -168,7 +168,6 @@ that for AdaBoost is 0.8194. Both algorithms yielded similar results.
 
 ![ROC for Random Forest (black) and
 AdaBoost(red):](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/roc.png)
-
 The determining factor of correct classifications is suspected to be
 covariates other than gene expression since based on the gene expression
 analysis, there is no significant difference in subjects’ top gene
@@ -177,8 +176,8 @@ show a significantly different survival rate. A Log-rank test with a
 p-value of 0.2 further confirmed that there’s no difference in survival
 rate among the groups: treatment, therapy, and not reported.
 
-![Kaplan Meier Estimate
-Curve:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/km.png)
+\[Kaplan Meier Estimate
+Curve:\](~/Desktop/git\_docs/Repo\_team\_Genome-Surfers\_W2020/docs/km.png
 
 ![Hazard Ratio
 Curve:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/hr.png)

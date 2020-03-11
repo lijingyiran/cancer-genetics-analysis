@@ -3,10 +3,6 @@ title: "Progress Report"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 # What has changed based on the final proposal (2 pt.)
 
 ## Did your dataset change? If so, why?
@@ -80,10 +76,9 @@ The Scree plot shows that the first principal component captures 63.1% of the to
 The accuracy for the random forest algorithm is 70% while that for the AdaBoost algorithm is 73%. The AUC for the random forest is 0.8825 while that for AdaBoost is 0.8194. Both algorithms yielded similar results.
 
 ![ROC for Random Forest (black) and AdaBoost(red):](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/roc.png)
-
 The determining factor of correct classifications is suspected to be covariates other than gene expression since based on the gene expression analysis, there is no significant difference in subjects’ top gene expression. Based on the Kaplan Meier plot, the three group does not show a significantly different survival rate. A Log-rank test with a p-value of 0.2 further confirmed that there’s no difference in survival rate among the groups: treatment, therapy, and not reported.
 
-![Kaplan Meier Estimate Curve:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/km.png)
+![Kaplan Meier Estimate Curve:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/km.png
 
 
 ![Hazard Ratio Curve:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/hr.png)
