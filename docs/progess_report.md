@@ -201,9 +201,15 @@ The accuracy for the random forest algorithm is 70% while that for the
 AdaBoost algorithm is 73%. The AUC for the random forest is 0.8825 while
 that for AdaBoost is 0.8194. Both algorithms yielded similar results.
 
+![Clustering vital status based on top 5000 gene
+expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/src/exploratory_analysis_HA_files/figure-gfm/unnamed-chunk-3-4.png)
+
+Figure 9: Clustering vital status based on top 5000 gene expression
+
 ![ROC for Random Forest (black) and
 AdaBoost(red):](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/roc.png)
-Figure 9: ROC for Random Forest (black) and AdaBoost(red)
+
+Figure 10: ROC for Random Forest (black) and AdaBoost(red)
 
 The determining factor of correct classifications is suspected to be
 covariates other than gene expression since based on the gene expression
@@ -216,12 +222,12 @@ rate among the groups: treatment, therapy, and not reported.
 ![Kaplan Meier Estimate
 Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/km.png)
 
-Figure 10: Kaplan Meier Estimate Curve
+Figure 11: Kaplan Meier Estimate Curve
 
 ![Hazard Ratio
 Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/hr.png)
 
-Figure 11: Hazard Ratio Curve
+Figure 12: Hazard Ratio Curve
 
 One of the primary goals is to identify which target genes affect the
 survival rate. However, the real challenge is that we could not find the
