@@ -116,6 +116,11 @@ R.
 
 ## Provide the links to any markdown reports within your repo to refer to the relevant analysis.
 
+[link to code script
+(.Rmd)](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/src/code.Rmd)
+[link to knitted code
+(.md)](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/src/code.md)
+
 ## Provide references.
 
 Cancer Genome Atlas Research Network. Electronic address:
