@@ -54,59 +54,59 @@ We were able to answer our hypotheses. Below is a brief summary of the primary r
 
 The top 5 genes selected using limma, ebayes, and a correlation heatmap is THBS1, NNMT, CREM, ITPRIP, and RP11. 
 
-![Heatmap of top 10 genes based on expression level:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/heatmap.png)
+![Heatmap of top 10 genes based on expression level:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/heatmap.png){width=50%}
 Figure 1: Heatmap of top 10 genes based on expression level
 
 The most important variables selected based on LASSO are age_at_index, year_of_diagnosis, race, gender, pathologic T, N, and M, pathologic stage, survival time, THBS1, CREM, and RP11. 
 
 In the hierarchical dendrogram (clustering) the samples are not well-separated when we stop the clustering algorithm at k equal to 5. It might be because of the similarity of gene expressions among all pancreatic adenocarcinoma patients.
 
-![Hierarchical dendrogram:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/dendro.png)
+![Hierarchical dendrogram:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/dendro.png){width=50%}
 
 Figure 2: Hierarchical dendrogram
 
 The Scree plot shows that the first principal component captures 63.1% of the total variance, and the second principal component explains 8.3% variance from the remaining variation. We kept the first two principal components with 71.4% variation retained to compare projected gene expression points of samples’ vital status. The concentration ellipses of alive and dead are greatly overlapping, meaning that the gene expression of alive samples might be similar to that of dead samples. 
 
-![Scree Plot:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/scree.png)
+![Scree Plot:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/scree.png){width=50%}
 
 Figure 3: Scree Plot
 
-![Clustering vital status based on THBS1 and NNMT gene expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust.png)
+![Clustering vital status based on THBS1 and NNMT gene expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust.png){width=50%}
 
 Figure 4: Clustering vital status based on THBS1 and NNMT gene expression
 
-![Clustering vital status based on THBS1 and CREM gene expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust2.png)
+![Clustering vital status based on THBS1 and CREM gene expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust2.png){width=50%}
 
 Figure 5: Clustering vital status based on THBS1 and CREM gene expression
 
-![Clustering genes based on principal components 1 and 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust3.png)
+![Clustering genes based on principal components 1 and 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust3.png){width=50%}
 
 Figure 6: Clustering genes based on principal components 1 and 2
 
-![Clustering pathologic stages based on principal components 1 and 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust4.png)
+![Clustering pathologic stages based on principal components 1 and 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust4.png){width=50%}
 
 Figure 7: Clustering pathologic stages based on principal components 1 and 2
 
-![Clustering vital status based on principal components 1 and 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust5.png)
+![Clustering vital status based on principal components 1 and 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust5.png){width=50%}
 Figure 8: Clustering vital status based on principal components 1 and 2
 
 The accuracy for the random forest algorithm is 70% while that for the AdaBoost algorithm is 73%. The AUC for the random forest is 0.8825 while that for AdaBoost is 0.8194. Both algorithms yielded similar results.
 
-![Clustering vital status based on top 5000 gene expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/src/exploratory_analysis_HA_files/figure-gfm/unnamed-chunk-3-4.png)
+![Clustering vital status based on top 5000 gene expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/src/exploratory_analysis_HA_files/figure-gfm/unnamed-chunk-3-4.png){width=50%}
 
 Figure 9: Clustering vital status based on top 5000 gene expression
 
-![ROC for Random Forest (black) and AdaBoost(red):](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/roc.png)
+![ROC for Random Forest (black) and AdaBoost(red):](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/roc.png){width=50%}
 
 Figure 10: ROC for Random Forest (black) and AdaBoost(red)
 
 The determining factor of correct classifications is suspected to be covariates other than gene expression since based on the gene expression analysis, there is no significant difference in subjects’ top gene expression. Based on the Kaplan Meier plot, the three group does not show a significantly different survival rate. A Log-rank test with a p-value of 0.2 further confirmed that there’s no difference in survival rate among the groups: treatment, therapy, and not reported.
 
-![Kaplan Meier Estimate Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/km.png)
+![Kaplan Meier Estimate Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/km.png){width=50%}
 
 Figure 11: Kaplan Meier Estimate Curve
 
-![Hazard Ratio Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/hr.png)
+![Hazard Ratio Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/hr.png){width=50%}
 
 Figure 12: Hazard Ratio Curve
 
