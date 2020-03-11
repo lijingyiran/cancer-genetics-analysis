@@ -24,8 +24,19 @@ due to the problem of right censoring.
 
 ## Are there any changes in task assignments of group members?
 
-No changes in task
-assignment.
+No changes in task assignment. All four group members performed a number
+of exploratory data analyses. Hassan provided in-context insight and
+added a glossary explaining the meaning of variables in the dataset to
+help the rest of the group to understand the data better. Hassan and
+Simran performed feature selection using PCA, analyzed the correlation
+among gene expressions using heatmaps and helped with biological
+interpretations. They also helped to organize the repo according to the
+rubric’s requirement. Lily and Sophia performed data cleaning, EDA, PCA
+and clustering plots, limma with a heat map of the top 10 genes, LASSO,
+gene classification, vital status classification, and survival analysis.
+Sophia and Lily also wrote the “progress of the analyses” and “results”
+sections of the
+report.
 
 # What is the progress of the analyses (5 pts.)
 
@@ -181,3 +192,24 @@ Curve:\](~/Desktop/git\_docs/Repo\_team\_Genome-Surfers\_W2020/docs/km.png
 
 ![Hazard Ratio
 Curve:](~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/docs/hr.png)
+
+One of the primary goals is to identify which target genes affect the
+survival rate. However, the real challenge is that we could not find the
+target genes from the top 10 genes. One possibility is that the target
+genes were not in the top 10 genes in the first place. Secondly, even if
+the target genes are located in the group of top 10 genes if a set of
+genes are enhancers while the others are inhibitors, the positive and
+negative effects that they impose on patients’ survival could be
+canceled out. Hence, finding those target genes is an immense challenge
+without further data on the genes and patients. The classification
+accuracy for both random forest and AdaBoost is semi-optimal. Different
+linear combinations of the covariates and different tree depths were
+used in both algorithms, but accuracy cannot be improved significantly.
+Therefore, an optimization strategy for both algorithms should be
+explored. Stratification should be employed to group subjects based on
+baseline covariates. However, stratification is not possible with the
+current set of covariates because they cannot serve as cluster factors.
+More information on subjects is needed. Another challenge is that the
+genes may not directly affect survival time, hence making it difficult
+to pinpoint target genes solely based on the outcomes of interest -
+survival time and vital status.
