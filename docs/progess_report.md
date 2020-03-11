@@ -140,7 +140,7 @@ The top 5 genes selected using limma, ebayes, and a correlation heatmap
 is THBS1, NNMT, CREM, ITPRIP, and RP11.
 
 ![Heatmap of top 10 genes based on expression
-level:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/heatmap.png)
+level:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/heatmap.png)
 
 The most important variables selected based on LASSO are age\_at\_index,
 year\_of\_diagnosis, race, gender, pathologic T, N, and M, pathologic
@@ -152,7 +152,7 @@ might be because of the similarity of gene expressions among all
 pancreatic adenocarcinoma patients.
 
 ![Hierarchical
-dendrogram:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/dendro.png)
+dendrogram:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/dendro.png)
 
 The Scree plot shows that the first principal component captures 63.1%
 of the total variance, and the second principal component explains 8.3%
@@ -163,27 +163,27 @@ of alive and dead are greatly overlapping, meaning that the gene
 expression of alive samples might be similar to that of dead samples.
 
 ![Scree
-Plot:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/scree.png)
+Plot:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/scree.png)
 ![Clustering vital status based on THBS1 and NNMT gene
-expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/clust.png)
+expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust.png)
 ![Clustering vital status based on THBS1 and CREM gene
-expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/clust2.png)
+expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust2.png)
 
 ![Clustering genes based on principal components 1 and
-2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/clust3.png)
+2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust3.png)
 
 ![Clustering pathologic stages based on principal components 1 and
-2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/clust4.png)
+2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust4.png)
 
 ![Clustering vital status based on principal components 1 and
-2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/clust5.png)
+2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust5.png)
 
 The accuracy for the random forest algorithm is 70% while that for the
 AdaBoost algorithm is 73%. The AUC for the random forest is 0.8825 while
 that for AdaBoost is 0.8194. Both algorithms yielded similar results.
 
 ![ROC for Random Forest (black) and
-AdaBoost(red):](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/roc.png)
+AdaBoost(red):](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/roc.png)
 The determining factor of correct classifications is suspected to be
 covariates other than gene expression since based on the gene expression
 analysis, there is no significant difference in subjects’ top gene
@@ -192,11 +192,11 @@ show a significantly different survival rate. A Log-rank test with a
 p-value of 0.2 further confirmed that there’s no difference in survival
 rate among the groups: treatment, therapy, and not reported.
 
-\[Kaplan Meier Estimate
-Curve:\](~/Desktop/git\_docs/Repo\_team\_Genome-Surfers\_W2020/docs/km.png
+![Kaplan Meier Estimate
+Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/km.png)
 
 ![Hazard Ratio
-Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/hr.png)
+Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/hr.png)
 
 One of the primary goals is to identify which target genes affect the
 survival rate. However, the real challenge is that we could not find the
