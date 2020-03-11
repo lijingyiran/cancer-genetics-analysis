@@ -17,6 +17,7 @@ suppressPackageStartupMessages(library(factoextra))
 suppressPackageStartupMessages(library(pheatmap))
 suppressPackageStartupMessages(library(randomForest))
 suppressPackageStartupMessages(library(fastAdaboost))
+suppressPackageStartupMessages(library(pROC))
 ```
 
 # Data Wrangling:
@@ -184,7 +185,7 @@ plot(lasso.reg, xvar = "lambda", label = T)
 ```{r}
 set.seed(400)
 train <- subset(train, select = -c(submitter_id, NNMT, ITPRIP))
-test <- subset(test, select = -c(submitter_id))
+test <- subset(test, select = -c(submitter_id,NNMT, ITPRIP))
 model1 <- randomForest(vital_status ~ ., data = train, importance = TRUE)
 model1
 
@@ -207,6 +208,14 @@ ada <- adaboost(vital_status ~., data =  train, 10, tree_depth = 5, n_rounds = 2
 pred <- predict(ada,newdata=test)
 print(pred$error)
 print(table(pred$class,test$vital_status))
+
+predValid1 <- predict(model1, test, type = "prob")
+rf.roc<-roc(test$vital_status,predValid1[,2])
+ada.roc<-roc(test$vital_status,pred$votes[,2])
+plot(rf.roc)
+lines(ada.roc, col = "red")
+auc(rf.roc)
+auc(ada.roc)
 ```
 
 

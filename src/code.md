@@ -15,6 +15,7 @@ suppressPackageStartupMessages(library(factoextra))
 suppressPackageStartupMessages(library(pheatmap))
 suppressPackageStartupMessages(library(randomForest))
 suppressPackageStartupMessages(library(fastAdaboost))
+suppressPackageStartupMessages(library(pROC))
 ```
 
 # Data Wrangling:
@@ -358,6 +359,41 @@ print(table(pred$class,test$vital_status))
     ##         Alive Dead
     ##   Alive    14    8
     ##   Dead      4   18
+
+``` r
+predValid1 <- predict(model1, test, type = "prob")
+rf.roc<-roc(test$vital_status,predValid1[,2])
+```
+
+    ## Setting levels: control = Alive, case = Dead
+
+    ## Setting direction: controls < cases
+
+``` r
+ada.roc<-roc(test$vital_status,pred$votes[,2])
+```
+
+    ## Setting levels: control = Alive, case = Dead
+    ## Setting direction: controls < cases
+
+``` r
+plot(rf.roc)
+lines(ada.roc, col = "red")
+```
+
+![](code_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
+
+``` r
+auc(rf.roc)
+```
+
+    ## Area under the curve: 0.8825
+
+``` r
+auc(ada.roc)
+```
+
+    ## Area under the curve: 0.8194
 
 # Classification of Gene Expressions
 
