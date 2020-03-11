@@ -141,6 +141,7 @@ is THBS1, NNMT, CREM, ITPRIP, and RP11.
 
 ![Heatmap of top 10 genes based on expression
 level:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/heatmap.png)
+Figure 1: Heatmap of top 10 genes based on expression level
 
 The most important variables selected based on LASSO are age\_at\_index,
 year\_of\_diagnosis, race, gender, pathologic T, N, and M, pathologic
@@ -154,6 +155,8 @@ pancreatic adenocarcinoma patients.
 ![Hierarchical
 dendrogram:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/dendro.png)
 
+Figure 2: Hierarchical dendrogram
+
 The Scree plot shows that the first principal component captures 63.1%
 of the total variance, and the second principal component explains 8.3%
 variance from the remaining variation. We kept the first two principal
@@ -164,19 +167,35 @@ expression of alive samples might be similar to that of dead samples.
 
 ![Scree
 Plot:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/scree.png)
+
+Figure 3: Scree Plot
+
 ![Clustering vital status based on THBS1 and NNMT gene
 expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust.png)
+
+Figure 4: Clustering vital status based on THBS1 and NNMT gene
+expression
+
 ![Clustering vital status based on THBS1 and CREM gene
 expression:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust2.png)
+
+Figure 5: Clustering vital status based on THBS1 and CREM gene
+expression
 
 ![Clustering genes based on principal components 1 and
 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust3.png)
 
+Figure 6: Clustering genes based on principal components 1 and 2
+
 ![Clustering pathologic stages based on principal components 1 and
 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust4.png)
 
+Figure 7: Clustering pathologic stages based on principal components 1
+and 2
+
 ![Clustering vital status based on principal components 1 and
 2:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/clust5.png)
+Figure 8: Clustering vital status based on principal components 1 and 2
 
 The accuracy for the random forest algorithm is 70% while that for the
 AdaBoost algorithm is 73%. The AUC for the random forest is 0.8825 while
@@ -184,6 +203,8 @@ that for AdaBoost is 0.8194. Both algorithms yielded similar results.
 
 ![ROC for Random Forest (black) and
 AdaBoost(red):](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/roc.png)
+Figure 9: ROC for Random Forest (black) and AdaBoost(red)
+
 The determining factor of correct classifications is suspected to be
 covariates other than gene expression since based on the gene expression
 analysis, there is no significant difference in subjects’ top gene
@@ -195,8 +216,12 @@ rate among the groups: treatment, therapy, and not reported.
 ![Kaplan Meier Estimate
 Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/km.png)
 
+Figure 10: Kaplan Meier Estimate Curve
+
 ![Hazard Ratio
 Curve:](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/plots/hr.png)
+
+Figure 11: Hazard Ratio Curve
 
 One of the primary goals is to identify which target genes affect the
 survival rate. However, the real challenge is that we could not find the
