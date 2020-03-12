@@ -7,12 +7,17 @@ output: github_document
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(reshape2))
 suppressPackageStartupMessages(library(survival))
+suppressPackageStartupMessages(library(survminer))
 suppressPackageStartupMessages(library(stringr))
 suppressPackageStartupMessages(library(ggpubr))
 suppressPackageStartupMessages(library(ggridges))
 suppressPackageStartupMessages(library(glmnet))
 suppressPackageStartupMessages(library(limma))
+suppressPackageStartupMessages(library(factoextra))
 suppressPackageStartupMessages(library(pheatmap))
+suppressPackageStartupMessages(library(randomForest))
+suppressPackageStartupMessages(library(fastAdaboost))
+suppressPackageStartupMessages(library(pROC))
 ```
 
 # Data Wrangling:
@@ -24,7 +29,8 @@ cli1 <- cli %>% select(c(submitter_id, age_at_index,
                          year_of_birth, year_of_death,year_of_diagnosis, 
                          vital_status, race, gender, ajcc_pathologic_m, 
                          ajcc_pathologic_n, 
-                         ajcc_pathologic_t, ajcc_pathologic_stage))
+                         ajcc_pathologic_t, ajcc_pathologic_stage,
+                         treatment_or_therapy))
 cli1 <- na.omit(cli1)
 
 load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
@@ -33,7 +39,6 @@ names(tcga) <- substr(names(tcga), 1, 12)
 t <- as.data.frame(t(as.matrix(tcga)))
 tcga1 <- tibble::rownames_to_column(t, "submitter_id")
 
-cli1$submitter_id <- as.factor(cli1$submitter_id)
 
 #dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
 
@@ -44,9 +49,6 @@ cli1$year_of_diagnosis <-as.numeric(levels(cli1$year_of_diagnosis)[cli1$year_of_
 cli1$year_of_death[is.na(cli1$year_of_death)] <- 2014
 cli1$sur_time <- cli1$year_of_death-cli1$year_of_diagnosis
 
-contrasts(as.factor(cli1$vital_status))
-
-
 temp <- data.frame(cbind(as.character(cli$submitter_id), as.character(cli$vital_status)))
 names(temp) <- c("submitter_id", "vital_status")
 ```
@@ -55,12 +57,12 @@ names(temp) <- c("submitter_id", "vital_status")
 
 ##Age distribution across gender
 
-```{r, warning=FALSE}
-mu <- dat %>% 
+```{r eval=FALSE, warning=FALSE, include=FALSE}
+mu <- cli1 %>% 
   group_by(gender) %>%
   summarise(grp.mean = mean(age_at_index))
 
-ggplot(dat, aes(x = age_at_index))+ 
+ggplot(cli1, aes(x = age_at_index))+ 
   geom_density(aes(fill = gender), alpha = 0.4) +
       geom_vline(aes(xintercept = grp.mean, color = gender),
              data = mu, linetype = "dashed") +
@@ -70,9 +72,9 @@ ggplot(dat, aes(x = age_at_index))+
 
 ##Age distribution across race
 
-```{r, warning=F}
+```{r eval=FALSE, warning=FALSE, include=FALSE}
 ggplot(
-  dat, 
+  cli1, 
   aes(x = age_at_index, y = race)
   ) +
   geom_density_ridges_gradient(
@@ -120,11 +122,13 @@ expressionDataForGene <- transformGeneExpressionMatrix(expressionMatrix)
 expressionDataForGene
 expressionDataForGene <- expressionDataForGene %>% left_join(cli1, by = "submitter_id")
 
-DesMat <- model.matrix(~vital_status, cli1)
+
+DesMat <- model.matrix(~ vital_status, cli1)
 dsFit <- lmFit(expressionMatrix.nogene, DesMat)
 ebfit <- eBayes(dsFit)
 toptab <- topTable(ebfit)
 important.genes <- expressionMatrix[as.numeric(rownames(toptab)),1]
+
 important.genes.exp <-  tcga1 %>% select(c(submitter_id, important.genes$gene))
 
 meta.with.imp.gene <- right_join(cli1, important.genes.exp, by = "submitter_id")
@@ -149,18 +153,19 @@ meta.with.imp.gene.final <- meta.with.imp.gene %>%
 # Lasso Selection
 
 ```{r}
-cli1 <- na.omit(cli1)
-
-smp_size <- floor(0.75 * nrow(cli1))
+meta.with.imp.gene.final <- na.omit(meta.with.imp.gene.final)
+meta.with.imp.gene.final$age_at_index <- as.numeric(meta.with.imp.gene.final$age_at_index)
+colnames(meta.with.imp.gene.final)[colnames(meta.with.imp.gene.final) == "RP11-21L23.2"] = "RP11"
+smp_size <- floor(0.75 * nrow(meta.with.imp.gene.final))
 
 set.seed(400)
-train_ind <- sample(seq_len(nrow(cli1)), size = smp_size)
+train_ind <- sample(seq_len(nrow(meta.with.imp.gene.final)), size = smp_size)
 
-cli.train <- cli1[train_ind, ]
-cli.test <- cli1[-train_ind, ]
+train <- meta.with.imp.gene.final[train_ind, ]
+test <- meta.with.imp.gene.final[-train_ind, ]
 
-yvar <- cli.train$vital_status
-temp2 <- cli.train[, - which(names(cli1) %in% c("vital_status", "submitter_id", "year_of_birth", "year_of_death"))]
+yvar <- train$vital_status
+temp2 <- train[, - which(names(meta.with.imp.gene.final) %in% c("vital_status", "submitter_id", "year_of_birth", "year_of_death"))]
 xvars <- model.matrix(yvar ~ ., data = temp2)
 
 cv.lasso.reg <- cv.glmnet(xvars, yvar, alpha = 1, nfolds = 3, 
@@ -176,4 +181,208 @@ lasso.reg <- glmnet(xvars, factor(yvar), alpha = 1, family =
 plot(lasso.reg, xvar = "lambda", label = T)
 ```
 
+# Classification of Vital Status
+```{r}
+set.seed(400)
+train <- subset(train, select = -c(submitter_id, NNMT, ITPRIP))
+test <- subset(test, select = -c(submitter_id,NNMT, ITPRIP))
+model1 <- randomForest(vital_status ~ ., data = train, importance = TRUE)
+model1
 
+# Predicting on train set
+predTrain <- predict(model1, train, type = "class")
+# Checking classification accuracy
+table(predTrain, train$vital_status) 
+
+predValid <- predict(model1, test, type = "class")
+# Checking classification accuracy
+mean(predValid == test$vital_status)                    
+table(predValid,test$vital_status)
+
+# To check important variables
+importance(model1)      
+varImpPlot(model1)
+
+#Adaboost
+ada <- adaboost(vital_status ~., data =  train, 10, tree_depth = 5, n_rounds = 200, verbose = TRUE)
+pred <- predict(ada,newdata=test)
+print(pred$error)
+print(table(pred$class,test$vital_status))
+
+predValid1 <- predict(model1, test, type = "prob")
+rf.roc<-roc(test$vital_status,predValid1[,2])
+ada.roc<-roc(test$vital_status,pred$votes[,2])
+plot(rf.roc)
+lines(ada.roc, col = "red")
+auc(rf.roc)
+auc(ada.roc)
+```
+
+
+
+# Classification of Gene Expressions
+
+## Data set
+```{r}
+# top 10 genes
+selectGene <- tcga1 %>% 
+  select(c(submitter_id, important.genes$gene))
+
+temp1 <- as.data.frame(selectGene %>% 
+  melt(id = "submitter_id",
+       var = "gene"))
+
+temp2 <- left_join(temp1, cli) 
+
+first10 <- temp2 %>% 
+  pivot_wider(names_from = "gene",
+              values_from = "value")
+
+
+# the first 2 expressed genes
+selectGene <- tcga1 %>% 
+  select(c(submitter_id, c(important.genes$gene[1], important.genes$gene[2])))
+
+temp4 <- as.data.frame(selectGene %>% 
+  melt(id = "submitter_id",
+       var = "gene"))
+
+temp5 <- left_join(temp4, cli1) 
+first2 <- temp5 %>% 
+  pivot_wider(names_from = "gene",
+              values_from = "value") 
+
+dim(first2)
+
+temp6 <- first2[,c(14,15)]
+# Dendogram
+dist.euclidean <- dist(temp6, method = "euclidean")
+p <- hclust(dist.euclidean, method = "single")
+plot(p, xlim = 50)
+rect.hclust(p, k =5)
+
+highlight_df <- first2[c(52,55,127,135),]
+highlight_df <- highlight_df %>% select("submitter_id", "THBS1", "NNMT", "vital_status")
+
+# ggplot first 2 gene samples
+first2 %>% 
+  select("submitter_id", "THBS1", "NNMT", "vital_status") %>% 
+  ggplot(aes(x = THBS1, y = NNMT, color = vital_status)) +
+  geom_point() +
+  geom_point(data = highlight_df, aes(x = THBS1, y = NNMT), size = 10) +
+  theme_bw()
+
+
+first10 %>% 
+  select("submitter_id", "CREM", "THBS1", "vital_status") %>% 
+  ggplot(aes(x = CREM, y = THBS1, color = vital_status)) +
+  geom_point() +
+  theme_bw()
+
+
+```
+
+# PCA
+```{r, message=FALSE, warning=FALSE}
+res.pca1 <- prcomp(first10[,162:171], scale = T)
+fviz_eig(res.pca1,addlabels = TRUE)
+var <- get_pca_var(res.pca1)
+
+set.seed(123)
+res.km <- kmeans(var$coord, centers = 2, nstart = 25)
+grp <- as.factor(res.km$cluster)
+# Color variables by groups
+fviz_pca_var(res.pca1, col.var = grp, 
+             palette = c("#0073C2FF", "#EFC000FF"),
+             legend.title = "Cluster",
+             title = "")
+
+
+fviz_pca_ind(res.pca1,
+             geom.ind = "point", # show points only (nbut not "text")
+             col.ind = factor(first10$ajcc_pathologic_stage), # color by groups
+             palette = c("#0073C2FF", "#EFC000FF", "green", "blue",
+                         "lightblue", "red", "grey", "black"),
+             addEllipses = TRUE, # Concentration ellipses
+             legend.title = "8 ajcc pathologic stages",
+             alpha.ind = 0.7,
+             title = ""
+             )
+
+fviz_pca_ind(res.pca1,
+             geom.ind = "point", # show points only (nbut not "text")
+             col.ind = factor(first10$vital_status), # color by groups
+             palette = c("#0073C2FF","green"),
+             addEllipses = TRUE, # Concentration ellipses
+             legend.title = "vital status",
+             alpha.ind = 0.7,
+             title = ""
+             )
+```
+
+
+# compare the alive and dead based on average top10 gene expresion 
+```{r}
+first10$count <- scale(rowMeans(first10[,162:171]))
+
+
+first10 %>% 
+  ggplot(aes(x = vital_status, y = count)) +
+  geom_violin(width = 0.3) +
+  theme_bw()
+
+# two sample t-test
+t.test(first10[first10$vital_status == "Alive", ]$count, first10[first10$vital_status == "Dead", ]$count)
+```
+
+
+```{r}
+sample_to_choose <- sample(1:length(unique(first10$submitter_id)), size = 100)
+names_to_choose <- as.character(unique(first10$submitter_id)[sample_to_choose])
+
+temp10 <- first10 %>% 
+    filter(submitter_id %in% names_to_choose) %>% 
+    group_by(submitter_id) 
+
+temp10 %>% 
+  ggplot(aes(x = as.factor(submitter_id), y = count, color = vital_status)) + 
+  geom_point() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+# Survival Analysis
+
+##Kalpan-Meier estimator
+We first use Kalpan-Meier plot to summarize the survival experience of the event-time porcess. `sur_time` variable is the duration from year of diagnosis to death. 
+
+```{r}
+sur_dat <- as.data.frame(cbind(cli1$sur_time, cli1$vital_status, cli1$treatment_or_therapy))
+colnames(sur_dat) <- c("sur_time", "vital_status", "treatment_or_therapy")
+with(cli1, Surv(sur_time, vital_status))
+fit1 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy, data = sur_dat)
+summary(fit1)
+
+ggsurvplot(
+  fit1, 
+  data =sur_dat , 
+  size = 1,                 # change line size
+  palette = 
+    c("#E7B800", "#2E9FDF", "green"),# custom color palettes
+  conf.int = TRUE,          # Add confidence interval
+  pval = TRUE,              # Add p-value
+  ggtheme = theme_bw()    
+)
+
+fit.coxph <- coxph(Surv(sur_time, vital_status) ~ treatment_or_therapy, 
+                   data = sur_dat)
+
+ggforest(fit.coxph, data = sur_dat)
+```
+
+## Log rank test
+```{r}
+survdiff(Surv(sur_time, vital_status) ~ treatment_or_therapy, 
+                   data = sur_dat)
+#p=0.2 no difference in survival
+```
