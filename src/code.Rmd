@@ -30,7 +30,7 @@ cli1 <- cli %>% select(c(submitter_id, age_at_index,
                          vital_status, race, gender, ajcc_pathologic_m, 
                          ajcc_pathologic_n, 
                          ajcc_pathologic_t, ajcc_pathologic_stage,
-                         treatment_or_therapy))
+                         treatment_or_therapy, treatment_type))
 cli1 <- na.omit(cli1)
 
 load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
@@ -232,46 +232,18 @@ temp1 <- as.data.frame(selectGene %>%
   melt(id = "submitter_id",
        var = "gene"))
 
-temp2 <- left_join(temp1, cli) 
+temp2 <- left_join(temp1, cli1) 
 
 first10 <- temp2 %>% 
   pivot_wider(names_from = "gene",
               values_from = "value")
 
-
-# the first 2 expressed genes
-selectGene <- tcga1 %>% 
-  select(c(submitter_id, c(important.genes$gene[1], important.genes$gene[2])))
-
-temp4 <- as.data.frame(selectGene %>% 
-  melt(id = "submitter_id",
-       var = "gene"))
-
-temp5 <- left_join(temp4, cli1) 
-first2 <- temp5 %>% 
-  pivot_wider(names_from = "gene",
-              values_from = "value") 
-
-dim(first2)
-
-temp6 <- first2[,c(14,15)]
-# Dendogram
-dist.euclidean <- dist(temp6, method = "euclidean")
+disdat <- first10[,16:25]
+# top 10 Dendogram
+dist.euclidean <- as.dist(1-cor(disdat))
 p <- hclust(dist.euclidean, method = "single")
 plot(p, xlim = 50)
 rect.hclust(p, k =5)
-
-highlight_df <- first2[c(52,55,127,135),]
-highlight_df <- highlight_df %>% select("submitter_id", "THBS1", "NNMT", "vital_status")
-
-# ggplot first 2 gene samples
-first2 %>% 
-  select("submitter_id", "THBS1", "NNMT", "vital_status") %>% 
-  ggplot(aes(x = THBS1, y = NNMT, color = vital_status)) +
-  geom_point() +
-  geom_point(data = highlight_df, aes(x = THBS1, y = NNMT), size = 10) +
-  theme_bw()
-
 
 first10 %>% 
   select("submitter_id", "CREM", "THBS1", "vital_status") %>% 
@@ -280,11 +252,17 @@ first10 %>%
   theme_bw()
 
 
+tempp <- left_join(temp1, cli) 
+
+first <- tempp %>% 
+  pivot_wider(names_from = "gene",
+              values_from = "value")
+
 ```
 
 # PCA
 ```{r, message=FALSE, warning=FALSE}
-res.pca1 <- prcomp(first10[,162:171], scale = T)
+res.pca1 <- prcomp(first[,162:171], scale = T)
 fviz_eig(res.pca1,addlabels = TRUE)
 var <- get_pca_var(res.pca1)
 
@@ -323,16 +301,16 @@ fviz_pca_ind(res.pca1,
 
 # compare the alive and dead based on average top10 gene expresion 
 ```{r}
-first10$count <- scale(rowMeans(first10[,162:171]))
+first$count <- scale(rowMeans(first[,162:171]))
 
 
-first10 %>% 
+first %>% 
   ggplot(aes(x = vital_status, y = count)) +
   geom_violin(width = 0.3) +
   theme_bw()
 
 # two sample t-test
-t.test(first10[first10$vital_status == "Alive", ]$count, first10[first10$vital_status == "Dead", ]$count)
+t.test(first[first$vital_status == "Alive", ]$count, first[first$vital_status == "Dead", ]$count)
 ```
 
 
@@ -340,7 +318,7 @@ t.test(first10[first10$vital_status == "Alive", ]$count, first10[first10$vital_s
 sample_to_choose <- sample(1:length(unique(first10$submitter_id)), size = 100)
 names_to_choose <- as.character(unique(first10$submitter_id)[sample_to_choose])
 
-temp10 <- first10 %>% 
+temp10 <- first %>% 
     filter(submitter_id %in% names_to_choose) %>% 
     group_by(submitter_id) 
 
@@ -357,10 +335,10 @@ temp10 %>%
 We first use Kalpan-Meier plot to summarize the survival experience of the event-time porcess. `sur_time` variable is the duration from year of diagnosis to death. 
 
 ```{r}
-sur_dat <- as.data.frame(cbind(cli1$sur_time, cli1$vital_status, cli1$treatment_or_therapy))
-colnames(sur_dat) <- c("sur_time", "vital_status", "treatment_or_therapy")
+sur_dat <- as.data.frame(cbind(cli1$sur_time, cli1$vital_status, cli1$treatment_or_therapy, cli1$treatment_type))
+colnames(sur_dat) <- c("sur_time", "vital_status", "treatment_or_therapy", "treatment_type")
 with(cli1, Surv(sur_time, vital_status))
-fit1 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy, data = sur_dat)
+fit1 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy + treatment_type, data = sur_dat)
 summary(fit1)
 
 ggsurvplot(
@@ -368,10 +346,57 @@ ggsurvplot(
   data =sur_dat , 
   size = 1,                 # change line size
   palette = 
-    c("#E7B800", "#2E9FDF", "green"),# custom color palettes
-  conf.int = TRUE,          # Add confidence interval
+    c("green", "dark green", "light blue", "blue","pink","red"),# custom color palettes
+  conf.int = F,          # Add confidence interval
+  ggtheme = theme_bw(),
+  legend = "right",
+  legend.title = "treatment levels",
+  legend.labs = c("no treatment (Pharmaceutical group)",
+                                 "no treatment (Radiation group)",
+                                 "not recorded (Pharmaceutical group)",
+                                 "not recorded (Radiation group)",
+                                 "with treatment (Pharmaceutical group)",
+                                 "with treatment (Radiation group)")
+) 
+
+# with treatment 
+sur_dat2 <- sur_dat %>% filter(treatment_type == 2 & treatment_or_therapy %in% c(1,3)) 
+colnames(sur_dat2) <- c("sur_time", "vital_status", "treatment_or_therapy", "treatment_type")
+fit2 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy + treatment_type, data = sur_dat2)
+summary(fit2)
+
+ggsurvplot(
+  fit2, 
+  data =sur_dat2 , 
+  size = 1,                 # change line size
+  palette = 
+    c("light blue", "blue"),# custom color palettes
+  conf.int = T,          # Add confidence interval
   pval = TRUE,              # Add p-value
-  ggtheme = theme_bw()    
+  ggtheme = theme_bw(),
+  legend = "top",
+  legend.title = "Radiation treatment",
+  legend.labs = c("no treatment",
+                  "with treatment")
+)
+
+# with treatment compare treatment types
+sur_dat3 <- sur_dat %>% filter(treatment_or_therapy == 3)
+colnames(sur_dat3) <- c("sur_time", "vital_status", "treatment_or_therapy", "treatment_type")
+fit3 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy + treatment_type, data = sur_dat3)
+summary(fit3)
+ggsurvplot(
+  fit3, 
+  data =sur_dat3 , 
+  size = 1,                 # change line size
+  palette = c("orange","red"),# custom color palettes
+  conf.int = T,          # Add confidence interval
+  pval = TRUE,              # Add p-value
+  ggtheme = theme_bw(),
+  legend = "top",
+  legend.title = "with treatment",
+  legend.labs = c("Pharmaceutical treatment",
+                  "Radiation treatment")
 )
 
 fit.coxph <- coxph(Surv(sur_time, vital_status) ~ treatment_or_therapy, 

@@ -29,7 +29,7 @@ cli1 <- cli %>% select(c(submitter_id, age_at_index,
                          vital_status, race, gender, ajcc_pathologic_m, 
                          ajcc_pathologic_n, 
                          ajcc_pathologic_t, ajcc_pathologic_stage,
-                         treatment_or_therapy))
+                         treatment_or_therapy, treatment_type))
 cli1 <- na.omit(cli1)
 
 load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
@@ -195,42 +195,43 @@ best.lam
 coef(cv.lasso.reg, s = best.lam)
 ```
 
-    ## 34 x 1 sparse Matrix of class "dgCMatrix"
-    ##                                              1
-    ## (Intercept)                       1.382392e+03
-    ## (Intercept)                       .           
-    ## age_at_index                      1.990851e-02
-    ## year_of_diagnosis                -6.873713e-01
-    ## raceblack or african american     .           
-    ## racenot reported                  .           
-    ## racewhite                        -1.966931e-01
-    ## gendermale                       -4.783423e-01
-    ## ajcc_pathologic_mM1               2.346579e-02
-    ## ajcc_pathologic_mMX               .           
-    ## ajcc_pathologic_nN0               .           
-    ## ajcc_pathologic_nN1               .           
-    ## ajcc_pathologic_nN1b              .           
-    ## ajcc_pathologic_nNX               3.650374e-01
-    ## ajcc_pathologic_tT1               .           
-    ## ajcc_pathologic_tT2               .           
-    ## ajcc_pathologic_tT3               1.696760e-01
-    ## ajcc_pathologic_tT4               .           
-    ## ajcc_pathologic_tTX               .           
-    ## ajcc_pathologic_stageStage I      .           
-    ## ajcc_pathologic_stageStage IA     .           
-    ## ajcc_pathologic_stageStage IB     .           
-    ## ajcc_pathologic_stageStage IIA    .           
-    ## ajcc_pathologic_stageStage IIB    5.006946e-01
-    ## ajcc_pathologic_stageStage III    .           
-    ## ajcc_pathologic_stageStage IV     2.604733e-03
-    ## treatment_or_therapynot reported  7.722387e-01
-    ## treatment_or_therapyyes          -3.152969e-01
-    ## sur_time                         -8.018183e-01
-    ## THBS1                             9.536650e-02
-    ## NNMT                              .           
-    ## CREM                             -3.447826e+00
-    ## ITPRIP                            .           
-    ## RP11                              3.633714e+00
+    ## 35 x 1 sparse Matrix of class "dgCMatrix"
+    ##                                                  1
+    ## (Intercept)                           1.382392e+03
+    ## (Intercept)                           .           
+    ## age_at_index                          1.990851e-02
+    ## year_of_diagnosis                    -6.873713e-01
+    ## raceblack or african american         .           
+    ## racenot reported                      .           
+    ## racewhite                            -1.966931e-01
+    ## gendermale                           -4.783423e-01
+    ## ajcc_pathologic_mM1                   2.346579e-02
+    ## ajcc_pathologic_mMX                   .           
+    ## ajcc_pathologic_nN0                   .           
+    ## ajcc_pathologic_nN1                   .           
+    ## ajcc_pathologic_nN1b                  .           
+    ## ajcc_pathologic_nNX                   3.650374e-01
+    ## ajcc_pathologic_tT1                   .           
+    ## ajcc_pathologic_tT2                   .           
+    ## ajcc_pathologic_tT3                   1.696760e-01
+    ## ajcc_pathologic_tT4                   .           
+    ## ajcc_pathologic_tTX                   .           
+    ## ajcc_pathologic_stageStage I          .           
+    ## ajcc_pathologic_stageStage IA         .           
+    ## ajcc_pathologic_stageStage IB         .           
+    ## ajcc_pathologic_stageStage IIA        .           
+    ## ajcc_pathologic_stageStage IIB        5.006946e-01
+    ## ajcc_pathologic_stageStage III        .           
+    ## ajcc_pathologic_stageStage IV         2.604733e-03
+    ## treatment_or_therapynot reported      7.722387e-01
+    ## treatment_or_therapyyes              -3.152969e-01
+    ## treatment_typeRadiation Therapy, NOS  .           
+    ## sur_time                             -8.018183e-01
+    ## THBS1                                 9.536650e-02
+    ## NNMT                                  .           
+    ## CREM                                 -3.447826e+00
+    ## ITPRIP                                .           
+    ## RP11                                  3.633714e+00
 
 ``` r
 plot(cv.lasso.reg)
@@ -261,12 +262,12 @@ model1
     ##  randomForest(formula = vital_status ~ ., data = train, importance = TRUE) 
     ##                Type of random forest: classification
     ##                      Number of trees: 500
-    ## No. of variables tried at each split: 3
+    ## No. of variables tried at each split: 4
     ## 
-    ##         OOB estimate of  error rate: 29.55%
+    ##         OOB estimate of  error rate: 31.06%
     ## Confusion matrix:
     ##       Alive Dead class.error
-    ## Alive    42   24   0.3636364
+    ## Alive    40   26   0.3939394
     ## Dead     15   51   0.2272727
 
 ``` r
@@ -287,7 +288,7 @@ predValid <- predict(model1, test, type = "class")
 mean(predValid == test$vital_status)                    
 ```
 
-    ## [1] 0.7045455
+    ## [1] 0.75
 
 ``` r
 table(predValid,test$vital_status)
@@ -295,8 +296,8 @@ table(predValid,test$vital_status)
 
     ##          
     ## predValid Alive Dead
-    ##     Alive     8    3
-    ##     Dead     10   23
+    ##     Alive    10    3
+    ##     Dead      8   23
 
 ``` r
 # To check important variables
@@ -304,37 +305,39 @@ importance(model1)
 ```
 
     ##                            Alive       Dead MeanDecreaseAccuracy
-    ## age_at_index           4.1358396 -3.7280747           1.09346266
-    ## year_of_birth          3.4532631 -4.3687326           0.04193846
-    ## year_of_death         23.0988862 17.6391461          22.90344761
-    ## year_of_diagnosis      3.3025931  2.5652024           4.10380214
-    ## race                   0.5898676 -0.7089703           0.03096113
-    ## gender                 3.9723769  5.9297868           6.54130903
-    ## ajcc_pathologic_m     -0.6642145 -0.8343337          -1.15040201
-    ## ajcc_pathologic_n      2.3974668  0.9705940           2.63333861
-    ## ajcc_pathologic_t      2.3443803  4.8715032           4.48253061
-    ## ajcc_pathologic_stage  2.0861379  3.9676739           4.01091448
-    ## treatment_or_therapy   4.3612540 -1.9089297           2.26132112
-    ## sur_time              11.7379277  6.4484777          11.87163785
-    ## THBS1                  4.1694151  4.3488726           5.42324432
-    ## CREM                  -0.3088039  0.2011058          -0.27375937
-    ## RP11                   5.6048993  4.6435825           7.08969631
+    ## age_at_index           3.7837874 -0.3650419           2.60286726
+    ## year_of_birth          2.0052041 -2.9793274          -0.26802418
+    ## year_of_death         25.2372559 19.1604012          25.19877841
+    ## year_of_diagnosis      3.1203853  1.7614282           3.61398131
+    ## race                  -1.7120786 -2.4464529          -2.77191367
+    ## gender                 3.1957658  5.1286842           5.25012841
+    ## ajcc_pathologic_m      0.2257410 -0.8869030          -0.52637393
+    ## ajcc_pathologic_n      2.3724764  0.5810740           2.25894283
+    ## ajcc_pathologic_t      1.4243925  3.4677205           3.31915383
+    ## ajcc_pathologic_stage  3.5063169  3.7966839           5.07213714
+    ## treatment_or_therapy   1.7546826  0.9586922           1.78366842
+    ## treatment_type        -1.4538082  0.4516831          -1.03927503
+    ## sur_time               9.8296904  6.6201143          11.42102577
+    ## THBS1                  1.0959312  2.8368672           2.64924974
+    ## CREM                  -0.4516851  1.0359117          -0.01997821
+    ## RP11                   6.7959284  2.7152865           6.56260315
     ##                       MeanDecreaseGini
-    ## age_at_index                 3.4443626
-    ## year_of_birth               17.3117862
-    ## year_of_death               12.7051276
-    ## year_of_diagnosis            2.1475119
-    ## race                         0.8294874
-    ## gender                       1.6123728
-    ## ajcc_pathologic_m            0.9764212
-    ## ajcc_pathologic_n            1.1815290
-    ## ajcc_pathologic_t            1.3616771
-    ## ajcc_pathologic_stage        2.8033933
-    ## treatment_or_therapy         1.6662583
-    ## sur_time                     5.6410485
-    ## THBS1                        3.9735738
-    ## CREM                         4.0579560
-    ## RP11                         5.4551117
+    ## age_at_index                 2.6792137
+    ## year_of_birth               18.7066015
+    ## year_of_death               12.7840591
+    ## year_of_diagnosis            2.0546732
+    ## race                         0.9167157
+    ## gender                       1.4924602
+    ## ajcc_pathologic_m            1.0017132
+    ## ajcc_pathologic_n            1.0684579
+    ## ajcc_pathologic_t            1.1491863
+    ## ajcc_pathologic_stage        2.6155060
+    ## treatment_or_therapy         1.6359480
+    ## treatment_type               0.5911329
+    ## sur_time                     5.5470424
+    ## THBS1                        3.9562686
+    ## CREM                         3.7170173
+    ## RP11                         5.4657492
 
 ``` r
 varImpPlot(model1)
@@ -349,7 +352,7 @@ pred <- predict(ada,newdata=test)
 print(pred$error)
 ```
 
-    ## [1] 0.2727273
+    ## [1] 0.2954545
 
 ``` r
 print(table(pred$class,test$vital_status))
@@ -357,8 +360,8 @@ print(table(pred$class,test$vital_status))
 
     ##        
     ##         Alive Dead
-    ##   Alive    14    8
-    ##   Dead      4   18
+    ##   Alive    13    8
+    ##   Dead      5   18
 
 ``` r
 predValid1 <- predict(model1, test, type = "prob")
@@ -387,13 +390,13 @@ lines(ada.roc, col = "red")
 auc(rf.roc)
 ```
 
-    ## Area under the curve: 0.8825
+    ## Area under the curve: 0.8846
 
 ``` r
 auc(ada.roc)
 ```
 
-    ## Area under the curve: 0.8194
+    ## Area under the curve: 0.8077
 
 # Classification of Gene Expressions
 
@@ -408,7 +411,7 @@ temp1 <- as.data.frame(selectGene %>%
   melt(id = "submitter_id",
        var = "gene"))
 
-temp2 <- left_join(temp1, cli) 
+temp2 <- left_join(temp1, cli1) 
 ```
 
     ## Joining, by = "submitter_id"
@@ -421,58 +424,15 @@ first10 <- temp2 %>%
   pivot_wider(names_from = "gene",
               values_from = "value")
 
-
-# the first 2 expressed genes
-selectGene <- tcga1 %>% 
-  select(c(submitter_id, c(important.genes$gene[1], important.genes$gene[2])))
-
-temp4 <- as.data.frame(selectGene %>% 
-  melt(id = "submitter_id",
-       var = "gene"))
-
-temp5 <- left_join(temp4, cli1) 
-```
-
-    ## Joining, by = "submitter_id"
-
-    ## Warning: Column `submitter_id` joining character vector and factor, coercing
-    ## into character vector
-
-``` r
-first2 <- temp5 %>% 
-  pivot_wider(names_from = "gene",
-              values_from = "value") 
-
-dim(first2)
-```
-
-    ## [1] 177  16
-
-``` r
-temp6 <- first2[,c(14,15)]
-# Dendogram
-dist.euclidean <- dist(temp6, method = "euclidean")
+disdat <- first10[,16:25]
+# top 10 Dendogram
+dist.euclidean <- as.dist(1-cor(disdat))
 p <- hclust(dist.euclidean, method = "single")
 plot(p, xlim = 50)
 rect.hclust(p, k =5)
 ```
 
 ![](code_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
-
-``` r
-highlight_df <- first2[c(52,55,127,135),]
-highlight_df <- highlight_df %>% select("submitter_id", "THBS1", "NNMT", "vital_status")
-
-# ggplot first 2 gene samples
-first2 %>% 
-  select("submitter_id", "THBS1", "NNMT", "vital_status") %>% 
-  ggplot(aes(x = THBS1, y = NNMT, color = vital_status)) +
-  geom_point() +
-  geom_point(data = highlight_df, aes(x = THBS1, y = NNMT), size = 10) +
-  theme_bw()
-```
-
-![](code_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
 
 ``` r
 first10 %>% 
@@ -482,12 +442,27 @@ first10 %>%
   theme_bw()
 ```
 
-![](code_files/figure-gfm/unnamed-chunk-7-3.png)<!-- -->
+![](code_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
+
+``` r
+tempp <- left_join(temp1, cli) 
+```
+
+    ## Joining, by = "submitter_id"
+
+    ## Warning: Column `submitter_id` joining character vector and factor, coercing
+    ## into character vector
+
+``` r
+first <- tempp %>% 
+  pivot_wider(names_from = "gene",
+              values_from = "value")
+```
 
 # PCA
 
 ``` r
-res.pca1 <- prcomp(first10[,162:171], scale = T)
+res.pca1 <- prcomp(first[,162:171], scale = T)
 fviz_eig(res.pca1,addlabels = TRUE)
 ```
 
@@ -540,10 +515,10 @@ fviz_pca_ind(res.pca1,
 # compare the alive and dead based on average top10 gene expresion
 
 ``` r
-first10$count <- scale(rowMeans(first10[,162:171]))
+first$count <- scale(rowMeans(first[,162:171]))
 
 
-first10 %>% 
+first %>% 
   ggplot(aes(x = vital_status, y = count)) +
   geom_violin(width = 0.3) +
   theme_bw()
@@ -553,13 +528,13 @@ first10 %>%
 
 ``` r
 # two sample t-test
-t.test(first10[first10$vital_status == "Alive", ]$count, first10[first10$vital_status == "Dead", ]$count)
+t.test(first[first$vital_status == "Alive", ]$count, first[first$vital_status == "Dead", ]$count)
 ```
 
     ## 
     ##  Welch Two Sample t-test
     ## 
-    ## data:  first10[first10$vital_status == "Alive", ]$count and first10[first10$vital_status == "Dead", ]$count
+    ## data:  first[first$vital_status == "Alive", ]$count and first[first$vital_status == "Dead", ]$count
     ## t = -0.29897, df = 164.9, p-value = 0.7653
     ## alternative hypothesis: true difference in means is not equal to 0
     ## 95 percent confidence interval:
@@ -572,7 +547,7 @@ t.test(first10[first10$vital_status == "Alive", ]$count, first10[first10$vital_s
 sample_to_choose <- sample(1:length(unique(first10$submitter_id)), size = 100)
 names_to_choose <- as.character(unique(first10$submitter_id)[sample_to_choose])
 
-temp10 <- first10 %>% 
+temp10 <- first %>% 
     filter(submitter_id %in% names_to_choose) %>% 
     group_by(submitter_id) 
 
@@ -593,8 +568,8 @@ is the duration from year of diagnosis to
 death.
 
 ``` r
-sur_dat <- as.data.frame(cbind(cli1$sur_time, cli1$vital_status, cli1$treatment_or_therapy))
-colnames(sur_dat) <- c("sur_time", "vital_status", "treatment_or_therapy")
+sur_dat <- as.data.frame(cbind(cli1$sur_time, cli1$vital_status, cli1$treatment_or_therapy, cli1$treatment_type))
+colnames(sur_dat) <- c("sur_time", "vital_status", "treatment_or_therapy", "treatment_type")
 with(cli1, Surv(sur_time, vital_status))
 ```
 
@@ -620,36 +595,54 @@ with(cli1, Surv(sur_time, vital_status))
     ## [172]  1:Dead  3:Dead  2+      1+      3:Dead  0:Dead
 
 ``` r
-fit1 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy, data = sur_dat)
+fit1 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy + treatment_type, data = sur_dat)
 summary(fit1)
 ```
 
-    ## Call: survfit(formula = Surv(sur_time, vital_status) ~ treatment_or_therapy, 
-    ##     data = sur_dat)
+    ## Call: survfit(formula = Surv(sur_time, vital_status) ~ treatment_or_therapy + 
+    ##     treatment_type, data = sur_dat)
     ## 
     ## 1 observation deleted due to missingness 
-    ##                 treatment_or_therapy=1 
+    ##                 treatment_or_therapy=1, treatment_type=1 
     ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
-    ##     0     76      21    0.724  0.0513        0.630        0.832
-    ##     1     55      15    0.526  0.0573        0.425        0.651
-    ##     2     30       5    0.439  0.0597        0.336        0.573
-    ##     3     19       3    0.369  0.0622        0.265        0.514
+    ##     0     14       3    0.786   0.110        0.598        1.000
+    ##     1     11       3    0.571   0.132        0.363        0.899
+    ##     2      7       1    0.490   0.136        0.284        0.845
+    ## 
+    ##                 treatment_or_therapy=1, treatment_type=2 
+    ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
+    ##     0     62      18    0.710  0.0576        0.605        0.832
+    ##     1     44      12    0.516  0.0635        0.406        0.657
+    ##     2     23       4    0.426  0.0664        0.314        0.579
+    ##     3     13       3    0.328  0.0714        0.214        0.502
     ##    13      1       1    0.000     NaN           NA           NA
     ## 
-    ##                 treatment_or_therapy=2 
-    ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
-    ##     1     11       2    0.818   0.116        0.619        1.000
-    ##     2      6       1    0.682   0.158        0.433        1.000
-    ##     3      5       2    0.409   0.177        0.175        0.955
-    ##     5      1       1    0.000     NaN           NA           NA
+    ##                 treatment_or_therapy=2, treatment_type=1 
+    ##         time       n.risk      n.event     survival      std.err lower 95% CI 
+    ##        1.000        5.000        2.000        0.600        0.219        0.293 
+    ## upper 95% CI 
+    ##        1.000 
     ## 
-    ##                 treatment_or_therapy=3 
+    ##                 treatment_or_therapy=2, treatment_type=2 
     ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
-    ##     0     89       7    0.921  0.0285        0.867        0.979
-    ##     1     82      16    0.742  0.0464        0.656        0.838
-    ##     2     51      10    0.596  0.0556        0.497        0.716
-    ##     3     22       6    0.434  0.0696        0.317        0.594
-    ##     4      8       2    0.325  0.0844        0.195        0.541
+    ##     2      5       1      0.8   0.179        0.516            1
+    ##     3      4       2      0.4   0.219        0.137            1
+    ##     5      1       1      0.0     NaN           NA           NA
+    ## 
+    ##                 treatment_or_therapy=3, treatment_type=1 
+    ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
+    ##     0     69       7    0.899  0.0363        0.830        0.973
+    ##     1     62      14    0.696  0.0554        0.595        0.813
+    ##     2     34       7    0.552  0.0653        0.438        0.696
+    ##     3     15       5    0.368  0.0801        0.240        0.564
+    ##     4      5       1    0.295  0.0919        0.160        0.543
+    ## 
+    ##                 treatment_or_therapy=3, treatment_type=2 
+    ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
+    ##     1     20       2    0.900  0.0671        0.778        1.000
+    ##     2     17       3    0.741  0.0999        0.569        0.965
+    ##     3      7       1    0.635  0.1302        0.425        0.949
+    ##     4      3       1    0.424  0.1935        0.173        1.000
 
 ``` r
 ggsurvplot(
@@ -657,14 +650,112 @@ ggsurvplot(
   data =sur_dat , 
   size = 1,                 # change line size
   palette = 
-    c("#E7B800", "#2E9FDF", "green"),# custom color palettes
-  conf.int = TRUE,          # Add confidence interval
-  pval = TRUE,              # Add p-value
-  ggtheme = theme_bw()    
-)
+    c("green", "dark green", "light blue", "blue","pink","red"),# custom color palettes
+  conf.int = F,          # Add confidence interval
+  ggtheme = theme_bw(),
+  legend = "right",
+  legend.title = "treatment levels",
+  legend.labs = c("no treatment (Pharmaceutical group)",
+                                 "no treatment (Radiation group)",
+                                 "not recorded (Pharmaceutical group)",
+                                 "not recorded (Radiation group)",
+                                 "with treatment (Pharmaceutical group)",
+                                 "with treatment (Radiation group)")
+) 
 ```
 
 ![](code_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+``` r
+# with treatment 
+sur_dat2 <- sur_dat %>% filter(treatment_type == 2 & treatment_or_therapy %in% c(1,3)) 
+colnames(sur_dat2) <- c("sur_time", "vital_status", "treatment_or_therapy", "treatment_type")
+fit2 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy + treatment_type, data = sur_dat2)
+summary(fit2)
+```
+
+    ## Call: survfit(formula = Surv(sur_time, vital_status) ~ treatment_or_therapy + 
+    ##     treatment_type, data = sur_dat2)
+    ## 
+    ## 1 observation deleted due to missingness 
+    ##                 treatment_or_therapy=1, treatment_type=2 
+    ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
+    ##     0     62      18    0.710  0.0576        0.605        0.832
+    ##     1     44      12    0.516  0.0635        0.406        0.657
+    ##     2     23       4    0.426  0.0664        0.314        0.579
+    ##     3     13       3    0.328  0.0714        0.214        0.502
+    ##    13      1       1    0.000     NaN           NA           NA
+    ## 
+    ##                 treatment_or_therapy=3, treatment_type=2 
+    ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
+    ##     1     20       2    0.900  0.0671        0.778        1.000
+    ##     2     17       3    0.741  0.0999        0.569        0.965
+    ##     3      7       1    0.635  0.1302        0.425        0.949
+    ##     4      3       1    0.424  0.1935        0.173        1.000
+
+``` r
+ggsurvplot(
+  fit2, 
+  data =sur_dat2 , 
+  size = 1,                 # change line size
+  palette = 
+    c("light blue", "blue"),# custom color palettes
+  conf.int = T,          # Add confidence interval
+  pval = TRUE,              # Add p-value
+  ggtheme = theme_bw(),
+  legend = "top",
+  legend.title = "Radiation treatment",
+  legend.labs = c("no treatment",
+                  "with treatment")
+)
+```
+
+![](code_files/figure-gfm/unnamed-chunk-11-2.png)<!-- -->
+
+``` r
+# with treatment compare treatment types
+sur_dat3 <- sur_dat %>% filter(treatment_or_therapy == 3)
+colnames(sur_dat3) <- c("sur_time", "vital_status", "treatment_or_therapy", "treatment_type")
+fit3 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy + treatment_type, data = sur_dat3)
+summary(fit3)
+```
+
+    ## Call: survfit(formula = Surv(sur_time, vital_status) ~ treatment_or_therapy + 
+    ##     treatment_type, data = sur_dat3)
+    ## 
+    ## 1 observation deleted due to missingness 
+    ##                 treatment_or_therapy=3, treatment_type=1 
+    ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
+    ##     0     69       7    0.899  0.0363        0.830        0.973
+    ##     1     62      14    0.696  0.0554        0.595        0.813
+    ##     2     34       7    0.552  0.0653        0.438        0.696
+    ##     3     15       5    0.368  0.0801        0.240        0.564
+    ##     4      5       1    0.295  0.0919        0.160        0.543
+    ## 
+    ##                 treatment_or_therapy=3, treatment_type=2 
+    ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
+    ##     1     20       2    0.900  0.0671        0.778        1.000
+    ##     2     17       3    0.741  0.0999        0.569        0.965
+    ##     3      7       1    0.635  0.1302        0.425        0.949
+    ##     4      3       1    0.424  0.1935        0.173        1.000
+
+``` r
+ggsurvplot(
+  fit3, 
+  data =sur_dat3 , 
+  size = 1,                 # change line size
+  palette = c("orange","red"),# custom color palettes
+  conf.int = T,          # Add confidence interval
+  pval = TRUE,              # Add p-value
+  ggtheme = theme_bw(),
+  legend = "top",
+  legend.title = "with treatment",
+  legend.labs = c("Pharmaceutical treatment",
+                  "Radiation treatment")
+)
+```
+
+![](code_files/figure-gfm/unnamed-chunk-11-3.png)<!-- -->
 
 ``` r
 fit.coxph <- coxph(Surv(sur_time, vital_status) ~ treatment_or_therapy, 
@@ -673,7 +764,7 @@ fit.coxph <- coxph(Surv(sur_time, vital_status) ~ treatment_or_therapy,
 ggforest(fit.coxph, data = sur_dat)
 ```
 
-![](code_files/figure-gfm/unnamed-chunk-11-2.png)<!-- -->
+![](code_files/figure-gfm/unnamed-chunk-11-4.png)<!-- -->
 
 ## Log rank test
 
