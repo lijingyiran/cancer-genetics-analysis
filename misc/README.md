@@ -1,1 +1,0 @@
-This folder contains miscellaneous files for this project. 

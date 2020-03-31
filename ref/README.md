@@ -1,1 +1,0 @@
-This folder contains references for this project.
