@@ -47,7 +47,7 @@ clean_meta_qcd <- clean_meta[!(clean_meta$submitter_id %in% outlier_samples), ]
 rownames(FV) <- substring(rownames(FV),1,12)
 ```
 
-*Plots*
+*PCA Plots*
 
 ``` r
 #grouped by race
@@ -81,3 +81,38 @@ ggplot(FV, aes(x=PC1, y=PC2)) +
 ```
 
 ![](exploratory_analysis_HA_files/figure-gfm/unnamed-chunk-3-4.png)<!-- -->
+*Heatmap*
+
+``` r
+x <-clean_meta_qcd[,-1]
+rownames(x) <- clean_meta_qcd$submitter_id
+
+DesMat <- model.matrix(~ vital_status, x)
+dsFit <- lmFit(tcga_z_qcd, DesMat)
+ebfit <- eBayes(dsFit)
+toptab <- topTable(ebfit)
+```
+
+    ## Removing intercept from test coefficients
+
+``` r
+tcga_z_qcd_filt <- tcga_z_qcd[rownames(tcga_z_qcd) %in% rownames(toptab),]
+colnames(tcga_z_qcd_filt) <- substring(colnames(tcga_z_qcd_filt),1,12)
+
+
+var1 = c("orange1", "green")
+names(var1) = levels(x$vital_status)
+
+var2 = c("blue", "red")
+names(var2) = levels(x$gender)
+
+covar_color <- list(vital_status = var1, gender = var2)
+
+
+pheatmap(tcga_z_qcd_filt, cluster_rows = TRUE,cluster_cols = TRUE, clustering_method = "ward.D2", 
+         clustering_distance_cols = "euclidean", show_rownames = TRUE,show_colnames = FALSE, 
+         main = "Clustering heatmap for top 10 genes", annotation = x[, c("vital_status", "gender")], 
+         annotation_colors = covar_color)
+```
+
+![](exploratory_analysis_HA_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
