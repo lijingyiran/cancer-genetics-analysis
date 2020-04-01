@@ -10,13 +10,15 @@ library(pheatmap)
 library(tidyverse)
 library(knitr)
 library(limma)
+
 load("~/Desktop/Bioinformatics/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
+
 clean_meta <- read.csv("~/Desktop/Bioinformatics/Repo_team_Genome-Surfers_W2020/data/processed/clean_meta.csv")
 
 ```
 
 _PCA of top 5000 most variable genes_
-```{r}
+```{r echo=TRUE}
 #PCA for top 5000 most variable genes
 
 tcga_z <- scale(tcga) #obtain z scores
@@ -33,7 +35,7 @@ plot(FV[, 1:2])
 
 ```
 _Cleaning the Dataset_
-```{r}
+```{r echo=TRUE}
 
 #Order by PC1
 FV_sorted <- FV[order(-FV$PC1),]
@@ -60,7 +62,7 @@ rownames(FV) <- substring(rownames(FV),1,12)
 ```
 
 _PCA Plots_
-```{r}
+```{r echo=TRUE}
 #grouped by race
 ggplot(FV, aes(x=PC1, y=PC2)) + 
   geom_point(aes(color=clean_meta_qcd$race))
@@ -81,7 +83,7 @@ ggplot(FV, aes(x=PC1, y=PC2)) +
 
 ```
 _Heatmap_
-```{r}
+```{r echo=TRUE}
 x <-clean_meta_qcd[,-1] #clean data
 rownames(x) <- clean_meta_qcd$submitter_id
 
