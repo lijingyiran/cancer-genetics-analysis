@@ -42,8 +42,6 @@ Pancreatic adenocarcinoma (PAAD) is the most prevalent form of pancreatic cancer
   + [:point_right: project final proposal](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/project_proposal.md)
   + [:point_right: progress report](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/progress_report.md)
   + [:point_right: oral presentation files](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/results/Oral%20presentation)
-* [`misc`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/misc) contains miscelaneous files. 
-* [`ref`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/ref) has the bib file for generating the project's references. 
 * [`src`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/src) includes the R code developed for the project.
 * [`data`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/data) contains data files used for the project.
 
