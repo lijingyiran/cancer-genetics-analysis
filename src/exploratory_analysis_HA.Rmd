@@ -1,5 +1,5 @@
 ---
-title: "exploratory_analysis"
+title: "More PCA and a Clustering Heatmap for Top 10 Genes"
 output: github_document
 ---
 
