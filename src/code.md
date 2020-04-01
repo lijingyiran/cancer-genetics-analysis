@@ -19,11 +19,13 @@ suppressPackageStartupMessages(library(fastAdaboost))
 suppressPackageStartupMessages(library(pROC))
 ```
 
-**Data
-Wrangling**
+**Data Wrangling**
 
 ``` r
+# read metadata
 cli <- read.csv("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad_clinical.csv", header = T)
+
+# delete duplicated rows
 toDelete <- seq(0, nrow(cli), 2)
 cli <-  cli[-toDelete, ]
 cli1 <- cli %>% select(c(submitter_id, age_at_index, 
@@ -34,14 +36,12 @@ cli1 <- cli %>% select(c(submitter_id, age_at_index,
                          treatment_or_therapy, treatment_type))
 cli1 <- na.omit(cli1)
 
+# load gene expression 
 load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 
 names(tcga) <- substr(names(tcga), 1, 12)
 t <- as.data.frame(t(as.matrix(tcga)))
 tcga1 <- tibble::rownames_to_column(t, "submitter_id")
-
-
-#dat <- right_join(x = tcga1, y = cli1, by = "submitter_id")
 
 cli1$year_of_death <- as.numeric(levels(cli1$year_of_death)[cli1$year_of_death])
 ```
@@ -55,6 +55,7 @@ cli1$year_of_diagnosis <-as.numeric(levels(cli1$year_of_diagnosis)[cli1$year_of_
     ## Warning: NAs introduced by coercion
 
 ``` r
+# calculate survival time and set censored patient death year as the final year
 cli1$year_of_death[is.na(cli1$year_of_death)] <- 2014
 cli1$sur_time <- cli1$year_of_death-cli1$year_of_diagnosis
 
@@ -70,6 +71,7 @@ gender, race, and pathological stages using density plots
 ## Age distribution across gender
 
 ``` r
+# to include mean in the plot below
 mu <- cli1 %>% 
   group_by(gender) %>%
   summarise(grp.mean = mean(age_at_index))
@@ -96,6 +98,7 @@ expressionMatrix.nogene <- t(scale(t(expressionMatrix[,-1])))
 
 meltedExpressionMatrix <- expressionMatrix %>% melt(id = "gene") 
 
+# do transformation on expression data to feed into limma
 transformGeneExpressionMatrix <- function(expressionMatrix) {
   expressionMatrix <- expressionMatrix %>%
     as.data.frame() %>% 
@@ -210,6 +213,7 @@ yvar <- train$vital_status
 temp2 <- train[, - which(names(meta.with.imp.gene.final) %in% c("vital_status", "submitter_id", "year_of_birth", "year_of_death"))]
 xvars <- model.matrix(yvar ~ ., data = temp2)
 
+# fit lasso
 cv.lasso.reg <- cv.glmnet(xvars, yvar, alpha = 1, nfolds = 3, 
                           family = "binomial", measure = "mse", 
                           standardize = T)
@@ -625,6 +629,8 @@ with(cli1, Surv(sur_time, vital_status))
     ## [172]  1:Dead  3:Dead  2+      1+      3:Dead  0:Dead
 
 ``` r
+# plot different kap meier graphs
+
 fit1 <- survfit(Surv(sur_time, vital_status) ~ treatment_or_therapy + treatment_type, data = sur_dat)
 summary(fit1)
 ```
