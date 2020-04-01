@@ -19,6 +19,9 @@ clean_meta <- read.csv("~/Desktop/Bioinformatics/Repo_team_Genome-Surfers_W2020/
 
 _PCA of top 5000 most variable genes_
 ```{r echo=TRUE}
+
+#Aim:  Not all samples are necessarily good, as different steps of RNA sequencing can fail for a #variety of reasons. With the help of some sanity checks / quality control (QC) measures, we can #try to eliminate bad apples at the start of our analysis using PCA.
+
 #PCA for top 5000 most variable genes
 
 tcga_z <- scale(tcga) #obtain z scores
@@ -33,6 +36,7 @@ colnames(FV) <- c("PC1", "PC2")
 rownames(FV) <- colnames(tcga_filt)
 plot(FV[, 1:2]) 
 
+#output: here we see that 8 samples seem to be outliers in the data, hene we will remove them from our dataset
 ```
 _Cleaning the Dataset_
 ```{r echo=TRUE}
@@ -63,6 +67,9 @@ rownames(FV) <- substring(rownames(FV),1,12)
 
 _PCA Plots_
 ```{r echo=TRUE}
+
+#Aim: To visualize trends amongst samples stratified by individual clincal covariates
+
 #grouped by race
 ggplot(FV, aes(x=PC1, y=PC2)) + 
   geom_point(aes(color=clean_meta_qcd$race))
@@ -81,9 +88,13 @@ ggplot(FV, aes(x=PC1, y=PC2)) +
   facet_wrap(~clean_meta_qcd$ajcc_pathologic_stage)
 
 
+
 ```
 _Heatmap_
 ```{r echo=TRUE}
+
+#Aim: To group samples based on their level of similarity with one another
+
 x <-clean_meta_qcd[,-1] #clean data
 rownames(x) <- clean_meta_qcd$submitter_id
 
@@ -110,5 +121,7 @@ pheatmap(tcga_z_qcd_filt, cluster_rows = TRUE,cluster_cols = TRUE, clustering_me
          clustering_distance_cols = "euclidean", show_rownames = TRUE,show_colnames = FALSE, 
          main = "Clustering heatmap for top 10 genes", annotation = x[, c("vital_status", "gender")], 
          annotation_colors = covar_color)
+
+#Output: Here we oberve that there is similar expression amongst samples for each gene, however #when we try to cluster rows ass well, we observe that some genes cluster together which could be #further investigated upon. 
 
 ```
