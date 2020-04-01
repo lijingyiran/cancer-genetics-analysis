@@ -48,6 +48,7 @@ Pancreatic adenocarcinoma (PAAD) is the most prevalent form of pancreatic cancer
 * [`data`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/data) contains data files used for the project.
 
 
+<a id="org4"></a>
 ### Main Results
 
 * The top 5 genes selected using limma, ebayes, and a correlation heatmap is THBS1, NNMT, CREM, ITPRIP, and RP11. The most important variables selected based on LASSO are age_at_index, year_of_diagnosis, race, gender, pathologic T, N, and M, pathologic stage, survival time, THBS1, CREM, and RP11.
