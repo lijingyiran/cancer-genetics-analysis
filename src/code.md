@@ -62,7 +62,7 @@ temp <- data.frame(cbind(as.character(cli$submitter_id), as.character(cli$vital_
 names(temp) <- c("submitter_id", "vital_status")
 ```
 
-\#Exploratory Data Analysis
+# Exploratory Data Analysis
 
 Aim: To visualize features and relationships of the covariates like age,
 gender, race, and pathological stages using density plots
@@ -84,7 +84,7 @@ ggplot(cli1, aes(x = age_at_index))+
 
 ![](code_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
-\#\#Age distribution across race
+## Age distribution across race
 
 ## Gene Expression Visualization
 
@@ -590,9 +590,11 @@ temp10 %>%
 
 **Survival Analysis**
 
-\#\#Kalpan-Meier estimator We first use Kalpan-Meier plot to summarize
-the survival experience of the event-time porcess. `sur_time` variable
-is the duration from year of diagnosis to
+## Kalpan-Meier estimator
+
+We first use Kalpan-Meier plot to summarize the survival experience of
+the event-time porcess. `sur_time` variable is the duration from year of
+diagnosis to
 death.
 
 ``` r
