@@ -2,6 +2,7 @@ code
 ================
 
 ``` r
+knitr::opts_chunk$set(echo = TRUE)
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(reshape2))
 suppressPackageStartupMessages(library(survival))
@@ -60,13 +61,31 @@ temp <- data.frame(cbind(as.character(cli$submitter_id), as.character(cli$vital_
 names(temp) <- c("submitter_id", "vital_status")
 ```
 
-# EDA:
+Exploratory Data Analysis:
 
-\#\#Age distribution across gender
+Aim: To visualize features and relationships of the covariates like age,
+gender, race, and pathological stages using density plots
 
-\#\#Age distribution across race
+Age distribution across gender
 
-## Gene Expression Visualization
+``` r
+mu <- cli1 %>% 
+  group_by(gender) %>%
+  summarise(grp.mean = mean(age_at_index))
+
+ggplot(cli1, aes(x = age_at_index))+ 
+  geom_density(aes(fill = gender), alpha = 0.4) +
+  geom_vline(aes(xintercept = grp.mean, color = gender),
+             data = mu, linetype = "dashed") +
+  scale_color_manual(values = c("#868686FF", "#EFC000FF"))+
+  scale_fill_manual(values = c("#868686FF", "#EFC000FF"))
+```
+
+![](code_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+Age distribution across race
+
+Gene Expression Visualization
 
 ``` r
 expressionMatrix <- tcga %>% rownames_to_column("gene") %>% as_tibble()
@@ -164,7 +183,12 @@ meta.with.imp.gene.final <- meta.with.imp.gene %>%
   select(-c("CTGF", "OLFML2B", "CTD-2033D15.2", "CYP1B1", "KCNE4"))
 ```
 
-# Lasso Selection
+Lasso Selection
+
+Aim: To further reduce the dimension of the feature space before
+performing a dichotomous classification (dead or alive) with least
+absolute shrinkage and selection operator (LASSO) with 3-fold cross
+validation
 
 ``` r
 meta.with.imp.gene.final <- na.omit(meta.with.imp.gene.final)
@@ -175,7 +199,10 @@ smp_size <- floor(0.75 * nrow(meta.with.imp.gene.final))
 set.seed(400)
 train_ind <- sample(seq_len(nrow(meta.with.imp.gene.final)), size = smp_size)
 
+#The algorithms were trained in a training set with sample size equaling to the floor value of #75% of the total sample size
 train <- meta.with.imp.gene.final[train_ind, ]
+
+#The algorithms were run on a validation set (the remaining 25% of the sample) to obtain AUC and #ROC
 test <- meta.with.imp.gene.final[-train_ind, ]
 
 yvar <- train$vital_status
@@ -247,7 +274,7 @@ plot(lasso.reg, xvar = "lambda", label = T)
 
 ![](code_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
 
-# Classification of Vital Status
+Classification of Vital Status
 
 ``` r
 set.seed(400)
@@ -398,9 +425,9 @@ auc(ada.roc)
 
     ## Area under the curve: 0.8077
 
-# Classification of Gene Expressions
+Classification of Gene Expressions
 
-## Data set
+Data set
 
 ``` r
 # top 10 genes
@@ -408,8 +435,8 @@ selectGene <- tcga1 %>%
   select(c(submitter_id, important.genes$gene))
 
 temp1 <- as.data.frame(selectGene %>% 
-  melt(id = "submitter_id",
-       var = "gene"))
+                         melt(id = "submitter_id",
+                              var = "gene"))
 
 temp2 <- left_join(temp1, cli1) 
 ```
@@ -459,7 +486,7 @@ first <- tempp %>%
               values_from = "value")
 ```
 
-# PCA
+PCA
 
 ``` r
 res.pca1 <- prcomp(first[,162:171], scale = T)
@@ -493,7 +520,7 @@ fviz_pca_ind(res.pca1,
              legend.title = "8 ajcc pathologic stages",
              alpha.ind = 0.7,
              title = ""
-             )
+)
 ```
 
 ![](code_files/figure-gfm/unnamed-chunk-8-3.png)<!-- -->
@@ -507,12 +534,12 @@ fviz_pca_ind(res.pca1,
              legend.title = "vital status",
              alpha.ind = 0.7,
              title = ""
-             )
+)
 ```
 
 ![](code_files/figure-gfm/unnamed-chunk-8-4.png)<!-- -->
 
-# compare the alive and dead based on average top10 gene expresion
+Comparing alive and dead based on average top10 gene expresion
 
 ``` r
 first$count <- scale(rowMeans(first[,162:171]))
@@ -548,8 +575,8 @@ sample_to_choose <- sample(1:length(unique(first10$submitter_id)), size = 100)
 names_to_choose <- as.character(unique(first10$submitter_id)[sample_to_choose])
 
 temp10 <- first %>% 
-    filter(submitter_id %in% names_to_choose) %>% 
-    group_by(submitter_id) 
+  filter(submitter_id %in% names_to_choose) %>% 
+  group_by(submitter_id) 
 
 temp10 %>% 
   ggplot(aes(x = as.factor(submitter_id), y = count, color = vital_status)) + 
@@ -560,7 +587,7 @@ temp10 %>%
 
 ![](code_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
-# Survival Analysis
+Survival Analysis
 
 \#\#Kalpan-Meier estimator We first use Kalpan-Meier plot to summarize
 the survival experience of the event-time porcess. `sur_time` variable
@@ -656,11 +683,11 @@ ggsurvplot(
   legend = "right",
   legend.title = "treatment levels",
   legend.labs = c("no treatment (Pharmaceutical group)",
-                                 "no treatment (Radiation group)",
-                                 "not recorded (Pharmaceutical group)",
-                                 "not recorded (Radiation group)",
-                                 "with treatment (Pharmaceutical group)",
-                                 "with treatment (Radiation group)")
+                  "no treatment (Radiation group)",
+                  "not recorded (Pharmaceutical group)",
+                  "not recorded (Radiation group)",
+                  "with treatment (Pharmaceutical group)",
+                  "with treatment (Radiation group)")
 ) 
 ```
 
@@ -766,11 +793,11 @@ ggforest(fit.coxph, data = sur_dat)
 
 ![](code_files/figure-gfm/unnamed-chunk-11-4.png)<!-- -->
 
-## Log rank test
+Log rank test
 
 ``` r
 survdiff(Surv(sur_time, vital_status) ~ treatment_or_therapy, 
-                   data = sur_dat)
+         data = sur_dat)
 ```
 
     ## Call:

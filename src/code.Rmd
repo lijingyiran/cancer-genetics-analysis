@@ -4,6 +4,7 @@ output: github_document
 ---
 
 ```{r setup, include=T}
+knitr::opts_chunk$set(echo = TRUE)
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(reshape2))
 suppressPackageStartupMessages(library(survival))
@@ -21,7 +22,7 @@ suppressPackageStartupMessages(library(pROC))
 ```
 
 # Data Wrangling:
-```{r}
+```{r echo=TRUE}
 cli <- read.csv("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad_clinical.csv", header = T)
 toDelete <- seq(0, nrow(cli), 2)
 cli <-  cli[-toDelete, ]
@@ -59,7 +60,7 @@ Aim: To visualize features and relationships of the covariates like age, gender,
 
 Age distribution across gender
 
-```{r eval=FALSE, warning=FALSE, include=FALSE}
+```{r echo=TRUE, warning=FALSE}
 mu <- cli1 %>% 
   group_by(gender) %>%
   summarise(grp.mean = mean(age_at_index))
@@ -90,7 +91,7 @@ ggplot(
 ```
 
 Gene Expression Visualization
-```{r}
+```{r echo=TRUE}
 expressionMatrix <- tcga %>% rownames_to_column("gene") %>% as_tibble()
 expressionMatrix <- na.omit(expressionMatrix)
 
@@ -156,7 +157,7 @@ Lasso Selection
 
 Aim: To further reduce the dimension of the feature space before performing a dichotomous classification (dead or alive) with least absolute shrinkage and selection operator (LASSO) with 3-fold cross validation
 
-```{r}
+```{r echo=TRUE}
 meta.with.imp.gene.final <- na.omit(meta.with.imp.gene.final)
 meta.with.imp.gene.final$age_at_index <- as.numeric(meta.with.imp.gene.final$age_at_index)
 colnames(meta.with.imp.gene.final)[colnames(meta.with.imp.gene.final) == "RP11-21L23.2"] = "RP11"
@@ -189,7 +190,7 @@ plot(lasso.reg, xvar = "lambda", label = T)
 ```
 
 Classification of Vital Status
-```{r}
+```{r echo=TRUE}
 set.seed(400)
 train <- subset(train, select = -c(submitter_id, NNMT, ITPRIP))
 test <- subset(test, select = -c(submitter_id,NNMT, ITPRIP))
@@ -230,7 +231,7 @@ auc(ada.roc)
 Classification of Gene Expressions
 
 Data set
-```{r}
+```{r echo=TRUE}
 # top 10 genes
 selectGene <- tcga1 %>% 
   select(c(submitter_id, important.genes$gene))
@@ -268,7 +269,7 @@ first <- tempp %>%
 ```
 
 PCA
-```{r, message=FALSE, warning=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 res.pca1 <- prcomp(first[,162:171], scale = T)
 fviz_eig(res.pca1,addlabels = TRUE)
 var <- get_pca_var(res.pca1)
@@ -306,8 +307,8 @@ fviz_pca_ind(res.pca1,
 ```
 
 
-compare the alive and dead based on average top10 gene expresion 
-```{r}
+Comparing alive and dead based on average top10 gene expresion 
+```{r echo=TRUE}
 first$count <- scale(rowMeans(first[,162:171]))
 
 
@@ -321,7 +322,7 @@ t.test(first[first$vital_status == "Alive", ]$count, first[first$vital_status ==
 ```
 
 
-```{r}
+```{r echo=TRUE}
 sample_to_choose <- sample(1:length(unique(first10$submitter_id)), size = 100)
 names_to_choose <- as.character(unique(first10$submitter_id)[sample_to_choose])
 
@@ -341,7 +342,7 @@ Survival Analysis
 ##Kalpan-Meier estimator
 We first use Kalpan-Meier plot to summarize the survival experience of the event-time porcess. `sur_time` variable is the duration from year of diagnosis to death. 
 
-```{r}
+```{r echo=TRUE}
 sur_dat <- as.data.frame(cbind(cli1$sur_time, cli1$vital_status, cli1$treatment_or_therapy, cli1$treatment_type))
 colnames(sur_dat) <- c("sur_time", "vital_status", "treatment_or_therapy", "treatment_type")
 with(cli1, Surv(sur_time, vital_status))
@@ -413,7 +414,7 @@ ggforest(fit.coxph, data = sur_dat)
 ```
 
 Log rank test
-```{r}
+```{r echo=TRUE}
 survdiff(Surv(sur_time, vital_status) ~ treatment_or_therapy, 
          data = sur_dat)
 #p=0.2 no difference in survival
