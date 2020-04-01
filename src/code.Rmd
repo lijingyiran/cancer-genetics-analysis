@@ -21,7 +21,7 @@ suppressPackageStartupMessages(library(fastAdaboost))
 suppressPackageStartupMessages(library(pROC))
 ```
 
-# Data Wrangling:
+__Data Wrangling__
 ```{r echo=TRUE}
 cli <- read.csv("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad_clinical.csv", header = T)
 toDelete <- seq(0, nrow(cli), 2)
@@ -54,11 +54,11 @@ temp <- data.frame(cbind(as.character(cli$submitter_id), as.character(cli$vital_
 names(temp) <- c("submitter_id", "vital_status")
 ```
 
-Exploratory Data Analysis:
+#Exploratory Data Analysis
 
 Aim: To visualize features and relationships of the covariates like age, gender, race, and pathological stages using density plots
 
-Age distribution across gender
+## Age distribution across gender
 
 ```{r echo=TRUE, warning=FALSE}
 mu <- cli1 %>% 
@@ -73,7 +73,7 @@ ggplot(cli1, aes(x = age_at_index))+
   scale_fill_manual(values = c("#868686FF", "#EFC000FF"))
 ```
 
-Age distribution across race
+##Age distribution across race
 
 ```{r eval=FALSE, warning=FALSE, include=FALSE}
 ggplot(
@@ -90,7 +90,7 @@ ggplot(
   labs(title = 'Age Distribution Across Race') 
 ```
 
-Gene Expression Visualization
+## Gene Expression Visualization
 ```{r echo=TRUE}
 expressionMatrix <- tcga %>% rownames_to_column("gene") %>% as_tibble()
 expressionMatrix <- na.omit(expressionMatrix)
@@ -153,7 +153,7 @@ meta.with.imp.gene.final <- meta.with.imp.gene %>%
 ```
 
 
-Lasso Selection
+__Lasso Selection__
 
 Aim: To further reduce the dimension of the feature space before performing a dichotomous classification (dead or alive) with least absolute shrinkage and selection operator (LASSO) with 3-fold cross validation
 
@@ -189,7 +189,7 @@ lasso.reg <- glmnet(xvars, factor(yvar), alpha = 1, family =
 plot(lasso.reg, xvar = "lambda", label = T)
 ```
 
-Classification of Vital Status
+## Classification of Vital Status
 ```{r echo=TRUE}
 set.seed(400)
 train <- subset(train, select = -c(submitter_id, NNMT, ITPRIP))
@@ -228,9 +228,9 @@ auc(ada.roc)
 
 
 
-Classification of Gene Expressions
+__Classification of Gene Expressions__
 
-Data set
+## Data set
 ```{r echo=TRUE}
 # top 10 genes
 selectGene <- tcga1 %>% 
@@ -268,7 +268,7 @@ first <- tempp %>%
 
 ```
 
-PCA
+## PCA
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 res.pca1 <- prcomp(first[,162:171], scale = T)
 fviz_eig(res.pca1,addlabels = TRUE)
@@ -307,7 +307,7 @@ fviz_pca_ind(res.pca1,
 ```
 
 
-Comparing alive and dead based on average top10 gene expresion 
+## Comparing alive and dead based on average top10 gene expresion 
 ```{r echo=TRUE}
 first$count <- scale(rowMeans(first[,162:171]))
 
@@ -337,7 +337,7 @@ temp10 %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
-Survival Analysis
+__Survival Analysis__
 
 ##Kalpan-Meier estimator
 We first use Kalpan-Meier plot to summarize the survival experience of the event-time porcess. `sur_time` variable is the duration from year of diagnosis to death. 
@@ -413,7 +413,7 @@ fit.coxph <- coxph(Surv(sur_time, vital_status) ~ treatment_or_therapy,
 ggforest(fit.coxph, data = sur_dat)
 ```
 
-Log rank test
+## Log rank test
 ```{r echo=TRUE}
 survdiff(Surv(sur_time, vital_status) ~ treatment_or_therapy, 
          data = sur_dat)
