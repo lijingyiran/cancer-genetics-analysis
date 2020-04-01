@@ -19,17 +19,17 @@ _PCA of top 5000 most variable genes_
 ```{r}
 #PCA for top 5000 most variable genes
 
-tcga_z <- scale(tcga)
-tcga_var <- as.matrix(as.data.frame(apply(tcga, 1, var)))
-tcga_var_sorted <- tcga_var[order(tcga_var, decreasing = TRUE), , drop = FALSE] 
+tcga_z <- scale(tcga) #obtain z scores
+tcga_var <- as.matrix(as.data.frame(apply(tcga, 1, var))) #obtain variance
+tcga_var_sorted <- tcga_var[order(tcga_var, decreasing = TRUE), , drop = FALSE]  
 tcga_var_top5000 <- as.matrix(as.data.frame(tcga_var_sorted[1:5000,]))
-tcga_filt <- tcga_z[rownames(tcga_z) %in% rownames(tcga_var_top5000),]
+tcga_filt <- tcga_z[rownames(tcga_z) %in% rownames(tcga_var_top5000),] #subset top 5000 genes
 A <- cov(tcga_filt, method = "pearson")
 E <- eigen(A)
 FV <- data.frame(as.matrix(E$vectors[, 1:2]), stringsAsFactors = F)
 colnames(FV) <- c("PC1", "PC2")
 rownames(FV) <- colnames(tcga_filt)
-plot(FV[, 1:2])
+plot(FV[, 1:2]) 
 
 ```
 _Cleaning the Dataset_
@@ -82,28 +82,29 @@ ggplot(FV, aes(x=PC1, y=PC2)) +
 ```
 _Heatmap_
 ```{r}
-x <-clean_meta_qcd[,-1]
+x <-clean_meta_qcd[,-1] #clean data
 rownames(x) <- clean_meta_qcd$submitter_id
 
-DesMat <- model.matrix(~ vital_status, x)
-dsFit <- lmFit(tcga_z_qcd, DesMat)
-ebfit <- eBayes(dsFit)
-toptab <- topTable(ebfit)
+DesMat <- model.matrix(~ vital_status, x) #create model matrix
+dsFit <- lmFit(tcga_z_qcd, DesMat) #fit matrix to data
+ebfit <- eBayes(dsFit) #obtain statistics
+toptab <- topTable(ebfit) #subset top 10 genes
 
-tcga_z_qcd_filt <- tcga_z_qcd[rownames(tcga_z_qcd) %in% rownames(toptab),]
-colnames(tcga_z_qcd_filt) <- substring(colnames(tcga_z_qcd_filt),1,12)
+tcga_z_qcd_filt <- tcga_z_qcd[rownames(tcga_z_qcd) %in% rownames(toptab),] #obtain expression of top 10 genes
+colnames(tcga_z_qcd_filt) <- substring(colnames(tcga_z_qcd_filt),1,12) # make sample ids comparable
 
-
-var1 = c("orange1", "green")
+#vital status factor for heatmap
+var1 = c("orange1", "green") 
 names(var1) = levels(x$vital_status)
 
+#gender factor for heat map
 var2 = c("blue", "red")
 names(var2) = levels(x$gender)
 
 covar_color <- list(vital_status = var1, gender = var2)
 
-
-pheatmap(tcga_z_qcd_filt, cluster_rows = TRUE,cluster_cols = TRUE, clustering_method = "ward.D2", 
+#generate heatmap of top 10 genes
+pheatmap(tcga_z_qcd_filt, cluster_rows = TRUE,cluster_cols = TRUE, clustering_method = "ward.D2",
          clustering_distance_cols = "euclidean", show_rownames = TRUE,show_colnames = FALSE, 
          main = "Clustering heatmap for top 10 genes", annotation = x[, c("vital_status", "gender")], 
          annotation_colors = covar_color)
