@@ -6,7 +6,7 @@ Below summarizes the main result where code for a more detailed analysis can be 
 
 # Main Results
 
-* The top 5 genes selected using limma, ebayes, and a correlation heatmap is THBS1, NNMT, CREM, ITPRIP, and RP11. The most important variables selected based on LASSO are age_at_index, year_of_diagnosis, race, gender, pathologic T, N, and M, pathologic stage, survival time, THBS1, CREM, and RP11.
+* The top 5 genes selected using limma, ebayes, and a correlation heatmap is `THBS1`, `NNMT`, `CREM`, `ITPRIP`, and `RP11`. The most important variables selected based on LASSO are *age_at_index*, *year_of_diagnosis*, *race*, *gender*, *pathologic T, N, and M*, *pathologic stage*, *survival time*, `THBS1`, `CREM`, and `RP11`.
 
 * We kept the first two principal components with 71.4% variation retained to compare projected gene expression points of samples’ vital status. The concentration ellipses of alive and dead are greatly overlapping, meaning that the gene expression of alive samples might be similar to that of dead samples. 
 
@@ -27,3 +27,15 @@ Below summarizes the main result where code for a more detailed analysis can be 
     * Not recorded pharm group and with treatment radiation group
 
 * Subtle differences exist between radiation and pharmaceutical treatment. Radiation yields a slightly better survival. Log rank test with a borderline p-value.
+
+# Limitations
+
+* The real challenge is that we could not find the target genes from the top 10 genes, One possibility is that the target genes were not in the top 10 genes in the first place, and positive and negative effects that they impose on patients’ survival could be canceled out. Also, a lack of mutational signature data (`Kras`, `tp53`, `cdkn2a` and `smad4`) further limited our ability to accurately predict target genes. 
+
+* The classification accuracy for both random forest and AdaBoost is semi-optimal. An optimization strategy for both algorithms should be explored.
+
+* Stratification should be employed to group subjects based on baseline covariates. Stratification is not possible with the current set of covariates because they cannot serve as cluster factors.
+
+* Genes may not directly affect survival time, hence making it difficult to pinpoint target genes solely based on the outcomes of interest - survival time and vital status
+
+* In this project, we can only access the data for the cancer patients. Including control cohort might help to bring mutational signature data to the table. 
