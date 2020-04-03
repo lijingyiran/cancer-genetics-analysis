@@ -1,5 +1,5 @@
 ---
-title: "Simran"
+title: "Exploratory analysis: heatmaps, density plots, PCA plots"
 author: "Simran"
 date: "05/03/2020"
 output: github_document
@@ -144,7 +144,7 @@ ggplot(dataMelt, aes(value, color = Samples)) +
   theme(plot.title = element_text(hjust = 0.5)) + theme(legend.position="none")
 ```
 
-# Heatmaps: Show Correlation 
+# Heatmaps: Show Correlation between subjects
 ```{r fig8, fig.width = 10, fig.asp = .95}
 #Prepare Data
 load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
@@ -162,7 +162,7 @@ pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "ave
     main = "Clustering Heatmap: Pathologic Stage and Vital Status ", annotation = designFactors, treeheight_col = 35, treeheight_row = 35,
     fontsize = 3)
 ```
-
+# PCA Plots - What is the effect of covariates on gene expression?
 ```{r fig9, fig.width = 10, fig.asp = .95}
 #Prepare Data
 load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
