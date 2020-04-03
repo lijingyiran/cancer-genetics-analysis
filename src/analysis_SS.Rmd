@@ -16,17 +16,28 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(reshape2)
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# 
+# BiocManager::install("edgeR")
 library(edgeR)
 library(pheatmap)
 library(ggplot2)
+
+# library(devtools)
+# install_github("vqv/ggbiplot")
 library(ggbiplot)
+
 library(ggpubr)
+suppressPackageStartupMessages(library(reshape2))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(pheatmap))
 ```
 
 #Read in Data and Prepare Data Frame
 ```{r read in data} 
-demo<-read.csv("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad_clinical.csv", header = T)
-load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
+demo<-read.csv("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad_clinical.csv", header = T)
+load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 
 #Melt data
 tcga$gene <- rownames(tcga)
@@ -136,7 +147,7 @@ ggplot(dataMelt, aes(value, color = Samples)) +
 #Heatmaps: Show Correlation 
 ```{r fig8, fig.width = 10, fig.asp = .95}
 #Prepare Data
-load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
+load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 #tcga$gene <- rownames(tcga)
 demoHeat<-demo
 toDelete <- seq(1, nrow(demoHeat), 2)
@@ -154,7 +165,7 @@ pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "ave
 
 ```{r fig9, fig.width = 10, fig.asp = .95}
 #Prepare Data
-load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
+load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 #tcga$gene <- rownames(tcga)
 demoHeat<-demo
 toDelete <- seq(1, nrow(demoHeat), 2)
@@ -172,7 +183,7 @@ pheatmap(data.matrix, cluster_rows = T, scale = "none", clustering_method = "ave
 
 ```{r fig10, fig.width = 10, fig.asp = .95}
 #Prepare Data
-load("/Users/simransamra/R/git_temp/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
+load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
 #tcga$gene <- rownames(tcga)
 demoHeat<-demo
 toDelete <- seq(1, nrow(demoHeat), 2)
