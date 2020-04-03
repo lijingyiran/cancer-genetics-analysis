@@ -9,8 +9,8 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-##Loading Libraries
-```{r packages}
+## Loading Libraries
+```{r packages, message=FALSE, warning=FALSE}
 library(magrittr)
 library(dplyr)
 library(tidyverse)
@@ -34,7 +34,7 @@ suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(pheatmap))
 ```
 
-#Read in Data and Prepare Data Frame
+# Read in Data and Prepare Data Frame
 ```{r read in data} 
 demo<-read.csv("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad_clinical.csv", header = T)
 load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")
@@ -53,7 +53,7 @@ demo$submitter_id <- as.factor(demo$submitter_id)
 data <- right_join(x = tcgaN, y = demo, by = "submitter_id")
 ```
 
-#Density Plot - Age at Index vs Vital Status
+# Density Plot - Age at Index vs Vital Status
 ```{r fig1}
 ggplot(data, aes(x = age_at_index, colour=vital_status)) + 
 geom_density() +
@@ -63,7 +63,7 @@ theme(
 plot.title = element_text(color = "blue", size = 12, face = "bold")) +
 scale_fill_manual(values = c("darkblue", "darkred"))
 ```
-#Density Plot - Age at Index vs Pathologic Stage M
+# Density Plot - Age at Index vs Pathologic Stage M
 ```{r fig2}
 ggplot(data, aes(x = age_at_index, colour=ajcc_pathologic_m)) + 
 geom_density() +
@@ -76,7 +76,7 @@ plot.caption = element_text(color = "black", size = 6, hjust = 0)
 )
 ```
 
-#Density Plot - Age at Index vs Pathologic Stage N
+# Density Plot - Age at Index vs Pathologic Stage N
 ```{r fig3}
 ggplot(data, aes(x = age_at_index, colour=ajcc_pathologic_n)) + 
 geom_density() +
@@ -89,7 +89,7 @@ plot.caption = element_text(color = "black", size = 6, hjust = 0)
 )
 ```
 
-#Density Plot - Age at Index vs Pathologic Stage T
+# Density Plot - Age at Index vs Pathologic Stage T
 ```{r fig4}
 ggplot(data, aes(x = age_at_index, colour=ajcc_pathologic_t)) + 
 geom_density() +
@@ -108,7 +108,7 @@ plot.caption = element_text(color = "black", size = 6, hjust = 0)
 
 ![Definition of the different pathologic stages:](https://www.researchgate.net/publication/279306792/figure/tbl2/AS:601719029383177@1520472404649/TNM-Staging-of-Pancreatic-Cancer-a_W640.jpg)
 
-#Density Plot - Age at Index vs Pathologic Stage
+# Density Plot - Age at Index vs Pathologic Stage
 ```{r fig5}
 ggplot(data, aes(x = age_at_index, colour=ajcc_pathologic_stage)) + 
 geom_density() +
@@ -121,7 +121,7 @@ plot.caption = element_text(color = "black", size = 6, hjust = 0)
 ```
 
 
-#Boxplot - Distribution of Gene Expression
+# Boxplot - Distribution of Gene Expression
 
 ```{r fig6, fig.width = 10, fig.asp = .85}
 #Boxplot - Distribution of Gene Expression
@@ -133,7 +133,7 @@ ggplot(dataMelt, aes(x=Samples, y=value)) +
   ggtitle("Distribution of Gene Expression Across All 177 Samples")+
   theme(plot.title = element_text(hjust = 0.5))
 ```
-#Density Plot
+# Density Plot
 ```{r fig7, fig.width = 10, fig.asp = .90}
 #Density Plot
 ggplot(dataMelt, aes(value, color = Samples)) + 
@@ -144,7 +144,7 @@ ggplot(dataMelt, aes(value, color = Samples)) +
   theme(plot.title = element_text(hjust = 0.5)) + theme(legend.position="none")
 ```
 
-#Heatmaps: Show Correlation 
+# Heatmaps: Show Correlation 
 ```{r fig8, fig.width = 10, fig.asp = .95}
 #Prepare Data
 load("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad.RData")

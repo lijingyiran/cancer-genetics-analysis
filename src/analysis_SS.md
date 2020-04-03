@@ -3,130 +3,33 @@ Simran
 Simran
 05/03/2020
 
-\#\#Loading Libraries
+## Loading Libraries
 
 ``` r
 library(magrittr)
 library(dplyr)
-```
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
 library(tidyverse)
-```
-
-    ## ── Attaching packages ──────────────────── tidyverse 1.3.0 ──
-
-    ## ✓ ggplot2 3.3.0     ✓ purrr   0.3.3
-    ## ✓ tibble  2.1.3     ✓ stringr 1.4.0
-    ## ✓ tidyr   1.0.2     ✓ forcats 0.4.0
-    ## ✓ readr   1.3.1
-
-    ## ── Conflicts ─────────────────────── tidyverse_conflicts() ──
-    ## x tidyr::extract()   masks magrittr::extract()
-    ## x dplyr::filter()    masks stats::filter()
-    ## x dplyr::lag()       masks stats::lag()
-    ## x purrr::set_names() masks magrittr::set_names()
-
-``` r
 library(ggplot2)
 library(reshape2)
-```
-
-    ## 
-    ## Attaching package: 'reshape2'
-
-    ## The following object is masked from 'package:tidyr':
-    ## 
-    ##     smiths
-
-``` r
 # if (!requireNamespace("BiocManager", quietly = TRUE))
 #     install.packages("BiocManager")
 # 
 # BiocManager::install("edgeR")
 library(edgeR)
-```
-
-    ## Warning: package 'edgeR' was built under R version 3.6.2
-
-    ## Loading required package: limma
-
-``` r
 library(pheatmap)
 library(ggplot2)
 
 # library(devtools)
 # install_github("vqv/ggbiplot")
 library(ggbiplot)
-```
 
-    ## Loading required package: plyr
-
-    ## ------------------------------------------------------------------------------
-
-    ## You have loaded plyr after dplyr - this is likely to cause problems.
-    ## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
-    ## library(plyr); library(dplyr)
-
-    ## ------------------------------------------------------------------------------
-
-    ## 
-    ## Attaching package: 'plyr'
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     compact
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     arrange, count, desc, failwith, id, mutate, rename, summarise,
-    ##     summarize
-
-    ## Loading required package: scales
-
-    ## 
-    ## Attaching package: 'scales'
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     discard
-
-    ## The following object is masked from 'package:readr':
-    ## 
-    ##     col_factor
-
-    ## Loading required package: grid
-
-``` r
 library(ggpubr)
-```
-
-    ## 
-    ## Attaching package: 'ggpubr'
-
-    ## The following object is masked from 'package:plyr':
-    ## 
-    ##     mutate
-
-``` r
 suppressPackageStartupMessages(library(reshape2))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(pheatmap))
 ```
 
-\#Read in Data and Prepare Data
-Frame
+# Read in Data and Prepare Data Frame
 
 ``` r
 demo<-read.csv("~/Desktop/git_docs/Repo_team_Genome-Surfers_W2020/data/raw_data/tcga_paad_clinical.csv", header = T)
@@ -149,7 +52,7 @@ data <- right_join(x = tcgaN, y = demo, by = "submitter_id")
     ## Warning: Column `submitter_id` joining character vector and factor, coercing
     ## into character vector
 
-\#Density Plot - Age at Index vs Vital Status
+# Density Plot - Age at Index vs Vital Status
 
 ``` r
 ggplot(data, aes(x = age_at_index, colour=vital_status)) + 
@@ -161,7 +64,7 @@ plot.title = element_text(color = "blue", size = 12, face = "bold")) +
 scale_fill_manual(values = c("darkblue", "darkred"))
 ```
 
-![](analysis_SS_files/figure-gfm/fig1-1.png)<!-- --> \#Density Plot -
+![](analysis_SS_files/figure-gfm/fig1-1.png)<!-- --> \# Density Plot -
 Age at Index vs Pathologic Stage M
 
 ``` r
@@ -178,7 +81,7 @@ plot.caption = element_text(color = "black", size = 6, hjust = 0)
 
 ![](analysis_SS_files/figure-gfm/fig2-1.png)<!-- -->
 
-\#Density Plot - Age at Index vs Pathologic Stage N
+# Density Plot - Age at Index vs Pathologic Stage N
 
 ``` r
 ggplot(data, aes(x = age_at_index, colour=ajcc_pathologic_n)) + 
@@ -194,7 +97,7 @@ plot.caption = element_text(color = "black", size = 6, hjust = 0)
 
 ![](analysis_SS_files/figure-gfm/fig3-1.png)<!-- -->
 
-\#Density Plot - Age at Index vs Pathologic Stage T
+# Density Plot - Age at Index vs Pathologic Stage T
 
 ``` r
 ggplot(data, aes(x = age_at_index, colour=ajcc_pathologic_t)) + 
@@ -217,7 +120,7 @@ Classification](https://www.researchgate.net/publication/279306792/figure/tbl1/A
 ![Definition of the different pathologic
 stages:](https://www.researchgate.net/publication/279306792/figure/tbl2/AS:601719029383177@1520472404649/TNM-Staging-of-Pancreatic-Cancer-a_W640.jpg)
 
-\#Density Plot - Age at Index vs Pathologic Stage
+# Density Plot - Age at Index vs Pathologic Stage
 
 ``` r
 ggplot(data, aes(x = age_at_index, colour=ajcc_pathologic_stage)) + 
@@ -232,7 +135,7 @@ plot.caption = element_text(color = "black", size = 6, hjust = 0)
 
 ![](analysis_SS_files/figure-gfm/fig5-1.png)<!-- -->
 
-\#Boxplot - Distribution of Gene Expression
+# Boxplot - Distribution of Gene Expression
 
 ``` r
 #Boxplot - Distribution of Gene Expression
@@ -245,7 +148,7 @@ ggplot(dataMelt, aes(x=Samples, y=value)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-![](analysis_SS_files/figure-gfm/fig6-1.png)<!-- --> \#Density Plot
+![](analysis_SS_files/figure-gfm/fig6-1.png)<!-- --> \# Density Plot
 
 ``` r
 #Density Plot
@@ -259,7 +162,7 @@ ggplot(dataMelt, aes(value, color = Samples)) +
 
 ![](analysis_SS_files/figure-gfm/fig7-1.png)<!-- -->
 
-\#Heatmaps: Show Correlation
+# Heatmaps: Show Correlation
 
 ``` r
 #Prepare Data
