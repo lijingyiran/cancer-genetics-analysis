@@ -21,10 +21,10 @@ There are three main files:
    + PCA of top 5000 genes
    + Clustering heatmap for top 10 genes
 3. [Exploratory Analysis 2](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/src/analysis_SS.md): this contains more heatmaps, density plots, PCA plots for all genes, and the analysis mainly explore the Pathologic Stage of subjects
-  + Density plots
+   + Density plots
       + Age distribution across vital status
       + Age distribution across AJCC Pathologic T/N/M
-  + Description of TMN Staging system
-  + Heatmaps examining the correlation between subjects
-  + Exploratory PCA plots
+   + Description of TMN Staging system
+   + Heatmaps examining the correlation between subjects
+   + Exploratory PCA plots
 
