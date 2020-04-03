@@ -20,4 +20,4 @@ There are three main files:
 2. [Exploratory_Analysis_HA](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/src/exploratory_analysis_HA.md): this contains more PCA plots and a clustering heatmap for genes
   + PCA of top 5000 genes
   + Clustering heatmap for top 10 genes
-
+3. [Exploratory_Analysis_SS](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/src/analysis_SS.md): this contains [WRITE HERE]
