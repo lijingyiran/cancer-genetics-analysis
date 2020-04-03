@@ -24,7 +24,6 @@ There are three main files:
 + Density plots
     + Age distribution across vital status
     + Age distribution across AJCC Pathologic T/N/M
-    + Age distribution across AJCC Pathologic Stage
 + Description of TMN Staging system
 + Heatmaps examining the correlation between subjects
 + Exploratory PCA plots
