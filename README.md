@@ -40,19 +40,19 @@ Pancreatic adenocarcinoma (PAAD) is the most prevalent form of pancreatic cancer
 ### Directory roadmap
 
 (We may want to edit this once we have better-defined folders. Below an example.) Each directory includes its own README file. In general: 
-* [`data`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/data) contains data files used for the project.
-* [`docs`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/docs) includes the written portions of the project: main, sections, appendices, and project outline tex/pdfs/aux files. 
-  + [:point_right: project final proposal](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/project_proposal.md)
-  + [:point_right: progress report](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/blob/master/docs/progress_report.md)
-* [`src`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/src) includes the R code developed for the project.
-* [`results`](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/results) contains analysis results and oral presentation files.
-  + [:point_right: oral presentation files](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/results/Oral%20presentation)
+* [`data`](https://github.com/lijingyiran/cancer-genetics-analysis/tree/master/data) contains data files used for the project.
+* [`docs`](https://github.com/lijingyiran/cancer-genetics-analysis/tree/master/docs) includes the written portions of the project: main, sections, appendices, and project outline tex/pdfs/aux files. 
+  + [:point_right: project final proposal](https://github.com/lijingyiran/cancer-genetics-analysis/blob/master/docs/project_proposal.md)
+  + [:point_right: progress report](https://github.com/lijingyiran/cancer-genetics-analysis/blob/master/docs/progress_report.md)
+* [`src`](https://github.com/lijingyiran/cancer-genetics-analysis/tree/master/src) includes the R code developed for the project.
+* [`results`](https://github.com/lijingyiran/cancer-genetics-analysis/tree/master/results) contains analysis results and oral presentation files.
+  + [:point_right: oral presentation files](https://github.com/lijingyiran/cancer-genetics-analysis/tree/master/results/Oral%20presentation)
 
 
 <a id="org4"></a>
 ### Main Results
 
-[Click here](https://github.com/STAT540-UBC/Repo_team_Genome-Surfers_W2020/tree/master/results#main-results)
+[Click here](https://github.com/lijingyiran/cancer-genetics-analysis/tree/master/results#main-results)
 
 
 
