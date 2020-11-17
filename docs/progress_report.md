@@ -58,7 +58,7 @@ of cancer subjects. A heatmap showing correlation among these 10 genes
 were constructed, and a further variable selection step was performed.
 Within a pair of highly correlated genes, the less significant one
 deemed by limma was removed. A cluster dendrogram was plotted to
-visualize clustering subjects based on gene expression using the
+visualize clustering subjects based on gene expression.
 
 Euclidean distance between genes. A principal component analysis (PCA)
 was conducted to explore the top 10 highly expressed genes from a linear
